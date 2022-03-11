@@ -6,6 +6,17 @@ app =Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/libros')
+def libros():
+    return render_template('libros.html')
+
+@app.route('/empleados')
+def empleados():
+    return render_template('empleados.html')
+
+@app.route('/usuarios')
+def usuarios():
+    return render_template('usuarios.html')
 
 if __name__ == '__main__':
     app.run()
