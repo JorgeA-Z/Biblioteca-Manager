@@ -10,6 +10,10 @@ def index():
 def libros():
     return render_template('libros.html')
 
+@app.route('/libros/altas')
+def libros_altas():
+    return render_template('libros_altas.html')
+
 @app.route('/empleados')
 def empleados():
     return render_template('empleados.html')

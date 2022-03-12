@@ -1,1 +1,3 @@
-alert("Hola mundo")
+function Submitt() {
+    alert("Formulario enviado correctamente")
+}
