@@ -1,0 +1,17 @@
+{% extends './layout.html' %}
+
+{% block head %}
+
+{% endblock %}
+{% block title %}Inicio{% endblock %}
+
+{% block body %}
+<div class="jumbotron jumbotron-fluid m-5 pb-5">
+  <div class="container">
+    <h1 class="display-4">Bienvenido al sistema</h1>
+    <p class="lead">Este software es un sistema bibliotecario para gestionar miembros, libros y empleados de la biblioteca de forma rápida, fácil y segura.</p>
+    <img src="{{ url_for('static', filename='img/Biblioteca.jpg') }}" class=""
+    alt="">
+  </div>
+</div>
+{% endblock %}
