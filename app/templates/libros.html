@@ -8,10 +8,10 @@
           <a class="nav-link" href="/libros/altas">Alta<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Baja</a>
+          <a class="nav-link" href="/libros/bajas">Baja</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Lista</a>
+          <a class="nav-link" href="/libros/lista">Lista</a>
         </li>
       </ul>
     </div>
@@ -20,6 +20,10 @@
 {% block title %}Libros{% endblock %}
 
 {% block body %}
-  {% block formulario %}
-  {% endblock %}
+<div class="jumbotron jumbotron-fluid m-5 pb-5">
+  <div class="container">
+    <h1 class="display-4">Bienvenido al apartado de Libros</h1>
+    <p class="lead">Este apartado podrás añadir nuevos libros a la colección de la biblioteca, eliminarlos de ser necesario, así como listarlos.</p>
+  </div>
+</div>
 {% endblock %}

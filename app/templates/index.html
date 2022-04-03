@@ -1,10 +1,45 @@
-{% extends './layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Biblioteca manager{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+    crossorigin="anonymous"></script>
 
-{% block body %}
-<div class="d-flex align-items-center">
-    <strong>Nothing to see here yet!!</strong>
-    <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+  <title>Index</title>
+</head>
+
+<body>
+  <div  class="container m-5 pb-5">
+    <div class="row shadow p-4 mb-4 bg-white">
+      <div class="col">
+        <div class="card h-100">
+          <img src="{{ url_for('static', filename='img/LogoLibros.svg') }}" width="30" height="30" class="card-img-top"
+            alt="">
+          <div class="card-body">
+            <h5 class="card-title">Sistema bibliotecario</h5>
+            <p class="card-text">Sistema bibliotecario para gestionar miembros, libros y empleados de la biblioteca.</p>
+            <a href="/inicio" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <img src="{{ url_for('static', filename='img/person_black_24dp.svg') }}" width="30" height="30" class="card-img-top" alt="">
+          <div class="card-body">
+            <h5 class="card-title">Registro de visitantes</h5>
+            <p class="card-text">Registro de visitas de la biblioteca.</p>
+            <a href="#" class="btn btn-primary">Go</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-{% endblock %}
+</body>
+
+</html>
