@@ -1,12 +1,12 @@
-{% extends './empleados.html' %}
-{% block title %}Empleados bajas{% endblock %}
+{% extends './membresia.html' %}
+{% block title %}Membresia bajas{% endblock %}
 
 {% block body %}
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
 <form>
         <div class="form-group col-md-2">
-            <label for="RFC">RFC de empleado</label>
-            <input type="text" class="form-control" id="RFC">
+            <label for="IDdemembresia">ID de membresia</label>
+            <input type="text" class="form-control" id="IDdemembresia">
         </div>
     </div>
     <button type="submit" class="btn btn-primary small ml-2" onclick=Submitt()>Submit</button>

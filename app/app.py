@@ -35,6 +35,7 @@ def add_libro():
         e = request.form['SCDD']
         f = request.form['Cantidad']
         g = request.form['Tomo']
+        
         print(a, b, c, d, e, f, g)
         cur = mysql.connection.cursor()
         cur.execute('INSERT INTO libro (IDLIBRO, Nombre, Autor, SCDD, Editorial, Cantidad, Tomo) VALUES(%s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g))
@@ -68,6 +69,26 @@ def empleados_lista():
 @app.route('/membresia')
 def membresia():
     return render_template('membresia.html')
+
+@app.route('/membresia/altas')
+def membresia_altas():
+    return render_template('membresia_altas.html')
+
+@app.route('/membresia/bajas')
+def membresia_bajas():
+    return render_template('membresia_bajas.html')
+
+@app.route('/membresia/lista')
+def membresia_lista():
+    return render_template('membresia_lista.html')
+
+@app.route('/prestamos')
+def prestamos():
+    return render_template('prestamos.html')
+
+@app.route('/prestamos/lista')
+def prestamos_lista():
+    return render_template('prestamos_lista.html')
 
 if __name__ == '__main__':
     app.run()

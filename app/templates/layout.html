@@ -27,9 +27,14 @@
                 <a class="nav-link" href="/membresia">Membresias</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Prestamos</a>
+              <a class="nav-link" href="/prestamos">Préstamos</a>
           </li>
           </ul>
+          <div class="container">
+            <a class="navbar-brand" href="/">
+              <img src="{{ url_for('static', filename='img/logout_white_24dp.svg') }}" alt="" width="30" height="24">
+            </a>
+          </div>
         </div>
       </nav>
       {% block head %}

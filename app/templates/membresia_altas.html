@@ -1,0 +1,34 @@
+{% extends './membresia.html' %}
+{% block title %}Membresias altas{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+
+<form action="" method="POST">
+    <div class="form-group px-2">
+        <label for="IDMEMBRESIA">ID MEMBRESIA</label>
+        <input type="text" class="form-control" id="IDMEMBRESIA" name="IDMEMBRESIA">
+    </div>
+    <div class="form-group px-2">
+        <label for="IDVISITANTE">ID Visitante</label>
+        <input type="text" class="form-control" id="IDVISITANTE" name="IDVISITANTE">
+    </div>
+    <div class="form-group px-2">
+        <label for="Nacimiento">Fecha de Nacimiento</label>
+        <input type="date" class="form-control" id="Nacimiento" name="Nacimiento">
+    </div>
+    <div class="form-group px-2">
+        <label for="Domicilio">Domicilio</label>
+        <input type="text" class="form-control" id="Domicilio" name="Domicilio">
+    </div>
+    <div class="form-row px-2">
+        <div class="form-group col-md-2">
+            <label for="Correo">Correo Electrónico</label>
+            <input type="text" class="form-control" id="Correo" name="Correo">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary small ml-2" onclick=Submitt()>Submit</button>
+    <!-- La fecha de expiración se recupera de la base de datos directamente
+    y la fecha de expedición se tiene que calcular con Python -->
+</form>
+{% endblock %}
