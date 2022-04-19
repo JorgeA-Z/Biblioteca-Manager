@@ -12,30 +12,32 @@
     crossorigin="anonymous"></script>
 
   <title>Index</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/home_white_24dp.svg') }}">
+
 </head>
 
 <body>
   <div  class="container m-5 pb-5">
-    <div class="row shadow p-4 mb-4 bg-white">
+    <div class="row shadow p-4 mb-4 bg-white ">
       <div class="col">
-        <div class="card h-100">
+        <div class="card jumbotron h-100">
           <img src="{{ url_for('static', filename='img/LogoLibros.svg') }}" width="30" height="30" class="card-img-top"
             alt="">
           <div class="card-body">
             <h5 class="card-title">Sistema bibliotecario</h5>
             <p class="card-text">Sistema bibliotecario para gestionar miembros, libros y empleados de la biblioteca.</p>
-            <a href="/inicio" class="btn btn-primary">Go</a>
           </div>
+          <a href="/inicio" class="btn btn-primary btn-dark">Go</a>
         </div>
       </div>
       <div class="col">
-        <div class="card h-100">
+        <div class="card card jumbotron h-100">
           <img src="{{ url_for('static', filename='img/person_black_24dp.svg') }}" width="30" height="30" class="card-img-top" alt="">
           <div class="card-body">
             <h5 class="card-title">Registro de visitantes</h5>
             <p class="card-text">Registro de visitas de la biblioteca.</p>
-            <a href="#" class="btn btn-primary">Go</a>
           </div>
+          <a href="/visitas" class="btn btn-dark btn-primary">Go</a>
         </div>
       </div>
     </div>

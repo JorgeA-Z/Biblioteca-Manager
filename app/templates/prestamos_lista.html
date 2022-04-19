@@ -2,6 +2,18 @@
 {% block title %}Prestamos lista{% endblock %}
 
 {% block body %}
+<form>
+  <div class="container m-2 pb-2">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      <div class="col-6">
+        <input type="text" class="form-control" id="IDPRESTAMO" placeholder="ID Prestamo">
+      </div>
+      <div class="col-6">
+        <button type="submit" class="btn btn-primary small ml-3 btn-dark">Consulta</button>
+      </div>
+    </div>
+  </div>
+</form>
 <table class="table text-center">
   <thead>
     <tr>
@@ -12,9 +24,11 @@
   </thead>
   <tbody>
     <tr>
-      <th scope="row">1</th>
-      <td>10/24/2020</td>
-      <td>13/24/2020</td>
+      <!--
+        <th scope="row">1</th>
+        <td>10/24/2020</td>
+        <td>13/24/2020</td>
+      -->
     </tr>
   </tbody>
 </table>

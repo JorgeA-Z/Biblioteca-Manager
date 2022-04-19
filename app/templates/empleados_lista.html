@@ -2,6 +2,19 @@
 {% block title %}Empleados lista{% endblock %}
 
 {% block body %}
+<form>
+  <div class="container m-2 pb-2">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      <div class="col-6">
+        <input type="text" class="form-control" id="RFC" placeholder="RFC">
+      </div>
+      <div class="col-6">
+        <button type="submit" class="btn btn-primary small ml-2 btn-dark">Consulta</button>
+      </div>
+    </div>
+  </div>
+</form>
+
 <table class="table">
   <thead>
     <tr>

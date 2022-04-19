@@ -17,6 +17,10 @@ def index():
 def inicio():
     return render_template('inicio.html')
 
+@app.route('/visitas')
+def visitas():
+    return render_template('registro_de_visitas.html')
+
 @app.route('/libros')
 def libros():
     return render_template('libros.html')
