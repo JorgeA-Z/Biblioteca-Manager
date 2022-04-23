@@ -1,0 +1,69 @@
+{% extends './prestamos.html' %}
+{% block title %}Préstamos Nuevo{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+<form>
+  <div class="container m-2 pb-2">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      <div class="col-6">
+        <input type="text" class="form-control" id="ISBN" placeholder="ISBN">
+      </div>
+      <div class="col-6">
+          <div class="btn-group" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary btn-dark">Añadir</button>
+            <button type="button" class="btn btn-secondary btn-dark">Eliminar</button>
+            <button type="button" class="btn btn-secondary btn-dark">Realizar</button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</form>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID Membresia</th>
+        <th scope="col">Fecha de nacimiento</th>
+        <th scope="col">Domicilio</th>
+        <th scope="col">Estatus</th>
+        <th scope="col">Fecha de expiración</th>
+        <th scope="col">Correo electrónico</th>
+        <th scope="col">Fecha de expedición</th>
+  
+      </tr>
+    </thead>
+    <tbody>
+        <!--
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+    -->
+    </tbody>
+</table>  
+<table class="table">
+
+    <thead>
+      <tr>
+        <th scope="col">ISBN</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Autor</th>
+        <th scope="col">Editorial</th>
+        <th scope="col">Tomo</th>
+      </tr>
+    </thead>
+    <tbody>
+        <!--
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+    -->
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends './prestamos.html' %}
+{% block title %}Libros lista{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+  <div class="row d-flex justify-content-center">
+      <div class="col-md-6">
+          <div class="card px-5 py-5" id="form1">
+            <!-- <form action="{{url_for('add_libro')}}" method="POST"> -->
+            <form>
+              <div class="form-group px-2">
+                  <label for="IDMEMBRESIA">ID Membresia</label>
+                  <input type="text" class="form-control" id="IDMembresia" name="IDMembresia">
+
+                  <label for="IDMEMBRESIA">ID Empleado</label>
+                  <input type="text" class="form-control" id="IDEmpleado" name="IDEmpleado">
+              </div>
+              <!-- Remplazar con un boton -->
+              <a class="btn btn-dark w-100 " href="/prestamos/amonestaciones/historial">Continuar</a>
+            </form>
+
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

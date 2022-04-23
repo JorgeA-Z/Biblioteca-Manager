@@ -3,17 +3,24 @@
 
 {% block body %}
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
-<form>
-        <div class="form-group col-md-2">
-            <label for="Codigo">Código de libro</label>
-            <input type="text" class="form-control" id="Codigo">
-        </div>
-        <div class="form-group col-md-2">
-            <label for="IDEmpleado">Código de empleado</label>
-            <input type="text" class="form-control" id="IDEmpleado">
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card px-5 py-5" id="form1">
+              <!-- <form action="{{url_for('add_libro')}}" method="POST"> -->
+              <form>
+                <div class="form-group px-2">
+                    <label for="IDEMPLEADO">Código de libro</label>
+                    <input type="text" class="form-control" id="IDEMPLEADO" name="IDEMPLEADO">
+                </div>
+                <div class="form-group px-2">
+                  <label for="IDPRESTAMO">Código de empleado</label>
+                  <input type="text" class="form-control" id="IDEMPLEADO" name="IDEMPLEADO">
+                </div>
+                <button type="submit" class="btn btn-primary small ml-2 btn-dark" onclick=Submitt()>Submit</button>
+            </form>
+            </div>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary small ml-2 btn-dark" onclick=Submitt()>Submit</button>
-
-</form>
+</div>
 {% endblock %}
