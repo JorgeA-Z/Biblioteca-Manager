@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/account_circle_white_24dp.svg') }}">
 </head>
 
-<body>
+<body class="bg-dark">
   <div class="container mt-5">
     <div class="row d-flex justify-content-center">
         <div class="col-md-6">
@@ -33,13 +33,21 @@
         </div>
     </div>
   </div>
-<div class="container mt-5">
-  <div class="row d-flex justify-content-center">
-    <a href="/">
-      <img src="{{ url_for('static', filename='img/logout_black_24dp.svg') }}" alt="" width="30" height="24">
-    </a>
-  </div>  
-</div>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="ol-md-6">
+        <div class="btn-group">          
+          <a href="/menu">
+            <img src="{{ url_for('static', filename='img/arrow_back_white_24dp.svg') }}" alt="" width="30" height="24">
+          </a>
+
+          <a href="/">
+            <img src="{{ url_for('static', filename='img/logout_white_24dp.svg') }}" alt="" width="30" height="24">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 

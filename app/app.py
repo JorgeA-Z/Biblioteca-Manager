@@ -5,11 +5,15 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'sbiblioteca'
+app.config['MYSQL_PASSWORD'] = 'Password1.'
+app.config['MYSQL_DB'] = 'biblioteca'
 mysql = MySQL(app)
 
 @app.route('/')
+def login():
+    return render_template('login.html')
+    
+@app.route('/menu')
 def index():
     return render_template('index.html')
 
@@ -41,9 +45,9 @@ def add_libro():
         g = request.form['Tomo']
         
         print(a, b, c, d, e, f, g)
-        cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO libro (IDLIBRO, Nombre, Autor, SCDD, Editorial, Cantidad, Tomo) VALUES(%s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g))
-        mysql.connection.commit()
+        #cur = mysql.connection.cursor()
+        #cur.execute('INSERT INTO libro (IDLIBRO, Nombre, Autor, SCDD, Editorial, Cantidad, Tomo) VALUES(%s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g))
+        #mysql.connection.commit()
         return redirect(url_for('libros_altas'))
 
 @app.route('/libros/bajas')
@@ -94,25 +98,13 @@ def prestamos():
 def prestamos_lista():
     return render_template('prestamos_lista.html')
 
-@app.route('/prestamos/nuevo/login')
-def prestamos_nuevo_membresia():
-    return render_template('membresia_registro_de_prestamos.html')
-
-@app.route('/prestamos/nuevo/form')
+@app.route('/prestamos/nuevo')
 def prestamos_nuevo():
     return render_template('registro_de_prestamos.html')
 
 @app.route('/prestamos/devolucion')
 def prestamos_devolucion():
     return render_template('devolucion.html')
-
-@app.route('/prestamos/devolucion/login')
-def prestamos_devolucion_empleado():
-    return render_template('membresia_registro_de_prestamos_devolucion.html')
-
-@app.route('/prestamos/amonestaciones/login')
-def prestamos_amonestaciones_membresia():
-    return render_template('membresia_registro_de_prestamos_amonestaciones.html')
 
 @app.route('/prestamos/amonestaciones/historial')
 def prestamos_amonestaciones_historial():
@@ -121,10 +113,6 @@ def prestamos_amonestaciones_historial():
 @app.route('/prestamos/amonestaciones/detalle')
 def prestamos_amonestaciones_historial_detalle():
     return render_template('prestamos_detalle.html')
-
-@app.route('/prestamos/login')
-def prestamos_membresia():
-    return render_template('membresia_consulta_de_prestamos.html')
 
 if __name__ == '__main__':
     app.run()
