@@ -12,7 +12,46 @@ mysql = MySQL(app)
 @app.route('/')
 def login():
     return render_template('login.html')
-    
+
+@app.route('/login?')
+def login_error():
+    return render_template('login.html', error="Credenciales invalidas")
+
+@app.route('/login_user', methods=['POST'])
+def login_user():
+    if request.method == 'POST':
+        a = request.form['IDEMPLEADO']
+        b = request.form['CONTRASEÑA']
+        
+        print(a, b)
+        #cur = mysql.connection.cursor()
+        #cur.execute('INSERT INTO libro (IDLIBRO, Nombre, Autor, SCDD, Editorial, Cantidad, Tomo) VALUES(%s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g))
+        #mysql.connection.commit()
+
+        cur = mysql.connection.cursor()
+
+        sql = 'SELECT * FROM EMPLEADO where RFC=%s and CONTRASEÑA=%s'
+        
+        cur.execute(sql, (a, b))
+
+        try:
+            data = cur.fetchone()
+            if data[0] == a and data[1] == b:
+        
+                return redirect(url_for('index'))
+        
+            else:
+                #return render_template('login.html', error="Credenciales invalidas")
+                return redirect(url_for('login_error'))
+
+
+        except Exception as e:
+            print("No existe", e);
+        
+        #return render_template('login.html', error="Credenciales invalidas")
+
+        return redirect(url_for('login_error'))
+
 @app.route('/menu')
 def index():
     return render_template('index.html')

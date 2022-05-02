@@ -21,19 +21,28 @@
     <div class="row d-flex justify-content-center">
         <div class="col-md-6">
             <div class="card px-5 py-5" id="form1">
-              <!-- <form action="{{url_for('add_libro')}}" method="POST"> -->
-              <form>
+
+              <form action="{{url_for('login_user')}}" method="POST">
                 <div class="form-group px-2">
                     <label for="IDEMPLEADO">ID Empleado</label>
                     <input type="text" class="form-control" id="IDEMPLEADO" name="IDEMPLEADO">
                 </div>
                 <div class="form-group px-2">
                   <label for="IDPRESTAMO">Contraseña</label>
-                  <input type="text" class="form-control" id="IDEMPLEADO" name="IDEMPLEADO">
-              </div>
-                <!-- Remplazar con un boton -->
-                <a class="btn btn-dark w-100 " href="/menu">Iniciar sesión</a>
+                  <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA">
+                </div>
+                <div class="form-group px-2">
+                  <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
+                </div>
+
+
+
               </form>
+              {% if error %}
+              <div class="alert alert-danger" role="alert">
+                {{ error }}
+              </div>
+              {% endif %}
             </div>
         </div>
     </div>
