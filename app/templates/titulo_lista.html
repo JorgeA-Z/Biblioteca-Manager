@@ -1,0 +1,54 @@
+{% extends './libros.html' %}
+{% block title %}Colección de titulos{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+<form action="{{url_for('consulta_titulo')}}" method="POST", id="form">
+  <div class="container m-2 pb-2">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      <div class="col-6">
+        <input type="text" class="form-control" id="ISBN" name="ISBN" placeholder="ISBN">
+      </div>
+      <div class="col-6">
+        <button type="submit" class="btn btn-primary small ml-3 btn-dark">Consulta</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID Titulo</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Autor</th>
+      <th scope="col">Edición</th>
+      <th scope="col">SCDD</th>
+      <th scope="col">Editorial</th>
+      <th scope="col">Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for titulo in titulos %}
+    <tr>
+      <td> {{titulo.0}}</td>
+      <td> {{titulo.1}}</td>
+      <td> {{titulo.2}}</td>
+      <td> {{titulo.3}}</td>
+      <td> {{titulo.4}}</td>
+      <td> {{titulo.5}}</td>
+
+      <td> 
+        <a class="w-100 " href="/libros/titulos/lista/edit/{{ titulo.0 }}">Editar</a>
+        <span>/</span>
+        <a class="w-100 " href="/libros/titulos/lista/add/{{ titulo.0 }}">Añadir</a>
+
+      </td>
+
+
+    </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+{% endblock %}

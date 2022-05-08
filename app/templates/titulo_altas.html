@@ -1,0 +1,163 @@
+{% extends './libros.html' %}
+{% block title %}Titulo altas{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+
+
+<div class="container mt-5">
+    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="row d-flex justify-content-center">
+        <div class="col">
+            <form action="{{url_for('add_titulo')}}" method="POST", id="form">
+                <div class="row px-2">
+                    
+                    <div class="col mt-2">
+                        <input type="text" class="form-control" id="ISBN" name="ISBN" placeholder="ISBN" required>
+                        <small id="ISBNHelpBlock" class="form-text text-muted">
+                            International Standard Book Number. Este será el identificador del título. Introducir sin '-'.
+                        </small>
+                    </div>
+                    <div class="col mt-2">
+                        <input type="text" class="form-control" id="NOMBRE" name="NOMBRE" placeholder="Nombre" required>
+                    </div>
+                    
+                </div>
+                
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" id="AUTOR" name="AUTOR" placeholder="Autor" required>
+                    </div>
+                </div>
+
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" placeholder="SCDD" id="SCDD" name="SCDD" required>
+                        <small id="SCDDHelpBlock" class="form-text text-muted">
+                            Sistema Dewey de clasificación. Solo admite números decimales o enteros
+                        </small>
+                    </div>
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" placeholder="Editorial" id="EDITORIAL" name="EDITORIAL" required>
+                    </div>
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" placeholder="Edicion" id="EDICION" name="EDICION" required>
+                        <small id="EDICIONHelpBlock" class="form-text text-muted">
+                            Edicion del libro. Solo admite números enteros.
+                        </small>
+                    </div>
+                    
+                </div>
+
+                <div class="row px-2">
+                    <div class="col mt-3">
+                        <button type="submit" class="btn btn-dark">Registrar</button>                  
+                    </div>
+
+                </div>
+
+                <!-- 
+
+                    <div class="row px-2">
+                        <div class="col">
+                            <small id="passwordHelpBlock" class="form-text text-muted">
+                                Solo admite números decimales
+                            </small>
+                        </div>
+                        
+                        <div class="col">
+                            <select class="form-control" id="Estado">
+                                <option value="Bibliotecario">Activo</option>
+                                <option value="Administrador">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                -->
+
+            </form>
+        </div>
+
+        
+    </div>
+
+
+</div>
+
+<script>
+    
+    (function() {
+        'use strict';
+        const ISBN = document.getElementById("ISBN")
+        const EDICION = document.getElementById("EDICION")
+        const NOMBRE = document.getElementById("NOMBRE")
+        const AUTOR = document.getElementById("AUTOR")
+        const EDITORIAL = document.getElementById("EDITORIAL")
+        const SCDD = document.getElementById("SCDD")
+        let regrexISBN = /\b((?:97[89])?\d{9}[\dx])\b/i 
+
+        let regrexNUMBER = /^-?\d+$/
+
+        let regrexNUMBERFloat = /^[0-9]+([.])?([0-9]+)?$/
+
+        let detener = false
+        const form = document.getElementById("form")
+        form.addEventListener("submit", e=>{
+            
+            NOMBRE.classList.add('is-valid')
+            
+            EDITORIAL.classList.add('is-valid')
+
+            AUTOR.classList.add('is-valid')
+            
+            if(!regrexISBN.test(ISBN.value)){
+                detener = true
+                ISBN.classList.add('is-invalid')
+                
+            }else
+            {
+                ISBN.classList.add('is-valid')
+            }
+            
+            if(!regrexNUMBER.test(EDICION.value))
+            {
+                detener = true
+                EDICION.classList.add('is-invalid')
+                
+            }else
+            {
+                EDICION.classList.add('is-valid')
+
+            }
+
+            if(!regrexNUMBERFloat.test(SCDD.value))
+            {
+                detener = true
+                SCDD.classList.add('is-invalid')
+
+            }else
+            {
+                SCDD.classList.add('is-valid')
+
+            }
+            if(detener == true)
+            {
+                e.preventDefault()
+                e.stopPropagation()
+                detener = false
+            }
+
+        })
+
+      })();
+</script>
+{% endblock %}

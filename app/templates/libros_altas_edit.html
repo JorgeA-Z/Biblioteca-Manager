@@ -5,6 +5,9 @@
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
 
 <div class="container mt-5">
+    <a href="/libros/lista">
+        <img src="{{ url_for('static', filename='img/arrow_back_black_24dp.svg') }}" alt="" width="30" height="24">
+    </a>
     {% if error %}
     <div class="alert alert-danger" role="alert">
       {{ error }}
@@ -12,70 +15,25 @@
     {% endif %}
     <div class="row d-flex justify-content-center">
         <div class="col">
-            <form action="{{url_for('add_libro_nuevo')}}" method="POST", id="form">
+
+            <form action="{{url_for('edited_libro')}}" method="POST", id="form">
                 <div class="row px-2">
                     <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.0}}</label>
-                        <input type="hidden" class="form-control form-text text-muted" id="ISBN" name="ISBN" placeholder="ISBN" value="{{titulo.0}}">
-                        <small id="ISBNHelpBlock" class="form-text text-muted">
-                            International Standard Book Number. Este número es el identificador del titulo.
-                        </small>
-                    </div>
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{id.0 + 1}}</label>
-                        <input type="hidden" class="form-control form-text text-muted" id="ID" name="ID" placeholder="ID" value="{{id}}">
-                        <small id="IDHelpBlock" class="form-text text-muted">
+
+                        <label for="staticID" class="form-control text-muted">{{libro.0}}</label>
+                        <small id="CostoHelpBlock" class="form-text text-muted">
                             Identificador del libro.
-                        </small>
+                        </small> 
+                        <input type="hidden" class="form-control" placeholder="ID" name="ID" id="ID" value="{{libro.0}}">
                     </div>
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{ejemplar.0 + 1}}</label>
-                        <input type="hidden" class="form-control form-text text-muted" id="EJEMPLAR" name="EJEMPLAR" placeholder="EJEMPLAR" value="{{ejemplar.0}}">
-                        <small id="EJEMPLARHelpBlock" class="form-text text-muted">
-                            Numero de ejemplar.
-                        </small>
-                    </div>
-                </div>
-                
-                <div class="row px-2">
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.1}}</label>
-                        <small id="NOMBREHelpBlock" class="form-text text-muted">
-                            Nombre del libro.
-                        </small>
-                    </div>
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.2}}</label>
-                        <small id="AUTORHelpBlock" class="form-text text-muted">
-                            Autor del libro.
-                        </small>
-                    </div>
+
                 </div>
 
                 <div class="row px-2">
                     <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.3}}</label>
-                        <small id="EDICIONHelpBlock" class="form-text text-muted">
-                            Edicion del libro.
-                        </small>
-                    </div>
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.4}}</label>
-                        <small id="SCDDHelpBlock" class="form-text text-muted">
-                            Sistema Dewey de clasificación.
-                        </small>
-                    </div>
-                    <div class="col mt-3">
-                        <label for="staticEmail2" class="form-control">{{titulo.5}}</label>
-                        <small id="EDITORIALDHelpBlock" class="form-text text-muted">
-                            Editorial.
-                        </small>
-                    </div>
-                </div>
 
-                <div class="row px-2">
-                    <div class="col mt-3">
-                        <input type="text" class="form-control" placeholder="Costo" name="Costo" id="Costo">
+                        <input type="text" class="form-control" placeholder="Costo" name="Costo" id="Costo" value="{{libro.3}}">
+
                         <small id="CostoHelpBlock" class="form-text text-muted">
                             Solo admite números decimales y enteros.
                         </small>
