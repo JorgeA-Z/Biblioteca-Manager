@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
+from datetime import datetime, timedelta
+
+from websockets import Data
 
 app = Flask(__name__)
 
@@ -22,8 +25,6 @@ def login_user():
     if request.method == 'POST':
         a = request.form['IDEMPLEADO']
         b = request.form['CONTRASEÑA']
-        
-        print(a, b)
         #cur = mysql.connection.cursor()
         #cur.execute('INSERT INTO libro (IDLIBRO, Nombre, Autor, SCDD, Editorial, Cantidad, Tomo) VALUES(%s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g))
         #mysql.connection.commit()
@@ -36,21 +37,16 @@ def login_user():
 
         try:
             data = cur.fetchone()
-            if data[0] == a and data[1] == b:
+            if data[0] != a and data[1] != b:
         
-                return redirect(url_for('index'))
-        
-            else:
-                #return render_template('login.html', error="Credenciales invalidas")
                 return redirect(url_for('login_error'))
 
-
         except Exception as e:
-            print("No existe", e);
+            return redirect(url_for('login_error'))
         
         #return render_template('login.html', error="Credenciales invalidas")
 
-        return redirect(url_for('login_error'))
+        return redirect(url_for('index'))
 
 @app.route('/menu')
 def index():
@@ -167,6 +163,7 @@ def add_libro(id):
     if(data2 == None):
         data2 = (0)
 
+
     return render_template('libros_altas.html', titulo=data, id=data2, ejemplar= data3)
 
 @app.route('/libros/lista/edited', methods=['POST'])
@@ -176,7 +173,6 @@ def edited_libro():
         b = request.form['Costo']
         c = request.form['DAMAGE']
         d = request.form['Estado']
-        print(a, b, c, d)
 
         cur = mysql.connection.cursor()
         cur.execute('UPDATE LIBRO SET COSTO=%s, DAÑOS=%s, ESTADO=%s WHERE IDLIBRO =%s', (b, c, d, a))
@@ -263,37 +259,172 @@ def empleados_lista():
 def membresia():
     return render_template('membresia.html')
 
-@app.route('/membresia/altas')
-def membresia_altas():
-    return render_template('membresia_altas.html')
+@app.route('/membresia/altas/<idusuario>')
+def membresia_altas(idusuario):
+    cur = mysql.connection.cursor()
+    
+    cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
+    
+    data = cur.fetchone()
+
+    if data == None:
+        data = (0)
+
+    return render_template('membresia_altas.html', id=data, usuario=idusuario)
 
 @app.route('/membresia/lista')
 def membresia_lista():
-    return render_template('membresia_lista.html')
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM MEMBRESIA')
+    data = cur.fetchall()
+    return render_template('membresia_lista.html', miembros = data)
+
+@app.route('/add_miembro', methods=['POST'])
+def add_miembro():
+    if request.method == 'POST':
+        a = request.form['IDMEMBRESIA']
+        b = request.form['IDUSUARIO']
+        c = request.form['DOMICILIO']
+        d = request.form['CORREO']
+        e = request.form['NACIMIENTO']
+        f = request.form['ESTADO']
+        
+        cur = mysql.connection.cursor()
+
+        sql = 'SELECT * FROM USUARIO where IDUSUARIO={0}'.format(b)
+        
+        try:
+            cur.execute(sql)
+            data = cur.fetchone()
+
+            sql = 'SELECT * FROM MEMBRESIA where IDUSUARIO={0}'.format(b)
+            cur.execute(sql)
+            data = cur.fetchone()
+
+            if data != None:
+                return render_template('membresia_altas.html', id = data, error = 'El usuario ya esta asociado a una membresia')
+
+
+        except Exception as e:
+            cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
+            data = cur.fetchone()
+            if data == None:
+                data = (0)
+
+            return render_template('membresia_altas.html', id = data, error = 'Error: No existe el usuario')
+
+            
+        try:
+            fecha = datetime.today()
+            td = timedelta(days = 730)
+            fecha = fecha + td
+            g = str(fecha.strftime('%Y-%m-%d'))
+
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO MEMBRESIA (IDUSUARIO, NACIMIENTO, DOMICILIO, EXPIRACION, CORREO, ESTADO) VALUES(%s, %s, %s, %s, %s, %s)', (b, e, c, g, d, f))
+            mysql.connection.commit()
+
+        except Exception as e:
+            cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
+            data = cur.fetchone()
+            if data == None:
+                data = (0)
+            return render_template('membresia_altas.html', id = data, error = 'El usuario no existe')
+
+        return redirect(url_for('membresia_altas'))
+
+@app.route('/membresia/lista/edit/<id>')
+def edit_member(id):
+    cur = mysql.connection.cursor()
+        
+    cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA={0}'.format(id))
+
+    data = cur.fetchone()
+
+    return render_template('membresia_altas_edit.html', miembro = data)
+
+@app.route('/membresia/lista/edited', methods=['POST'])
+def edited_membresia():
+    if request.method == 'POST':
+        a = request.form['IDMEMBRESIA']
+        b = request.form['IDUSUARIO']
+        c = request.form['DOMICILIO']
+        d = request.form['CORREO']
+        e = request.form['NACIMIENTO']
+        f = request.form['ESTADO']
+
+        cur = mysql.connection.cursor()
+        if(f == '0'):
+            cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s, ESTADO=%s WHERE IDMEMBRESIA =%s', (c, d, e, f, a))
+        
+        elif(f == '2'):
+            f = '1'
+            fecha = datetime.today()
+            td = timedelta(days = 730)
+            fecha = fecha + td
+            g = str(fecha.strftime('%Y-%m-%d'))
+            
+            cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s, ESTADO=%s, EXPIRACION=%s WHERE IDMEMBRESIA =%s', (c, d, e, f, g, a))
+        else:
+            #cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s WHERE IDMEMBRESIA =%s', (b, c, d, a))
+
+            cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s WHERE IDMEMBRESIA =%s', (c, d, e, a))
+
+        mysql.connection.commit()
+    
+    return redirect(url_for('membresia_lista'))
+
+@app.route('/membresia/lista/usuarios')
+def usuarios_lista():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM USUARIO')
+    data = cur.fetchall()
+    return render_template('usuarios_lista.html', usuarios = data)
+
+@app.route('/membresia/lista/consulta', methods=['POST'])
+def consulta_miembro():
+    if request.method == 'POST':
+
+        a = request.form['ID']
+
+        try:
+            cur = mysql.connection.cursor()
+
+            sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA={0}'.format(a)
+        
+            cur.execute(sql)
+        
+            #data = cur.fetchone()
+            data = cur.fetchall()
+        except Exception as e:
+            return redirect(url_for('membresia_lista'))
+        
+    return render_template('membresia_lista.html', miembros = data)
+
+@app.route('/membresia/lista/usuarios/consulta', methods=['POST'])
+def consulta_usuario():
+    if request.method == 'POST':
+
+        a = request.form['ID']
+
+        try:
+            cur = mysql.connection.cursor()
+
+            sql = 'SELECT * FROM USUARIO where IDUSUARIO={0}'.format(a)
+        
+            cur.execute(sql)
+        
+            #data = cur.fetchone()
+            data = cur.fetchall()
+        except Exception as e:
+            return redirect(url_for('usuarios_lista'))
+        
+    return render_template('usuarios_lista.html', usuarios = data)
 
 @app.route('/prestamos')
 def prestamos():
     return render_template('prestamos.html')
 
-@app.route('/prestamos/lista')
-def prestamos_lista():
-    return render_template('prestamos_lista.html')
-
-@app.route('/prestamos/nuevo')
-def prestamos_nuevo():
-    return render_template('registro_de_prestamos.html')
-
-@app.route('/prestamos/devolucion')
-def prestamos_devolucion():
-    return render_template('devolucion.html')
-
-@app.route('/prestamos/amonestaciones/historial')
-def prestamos_amonestaciones_historial():
-    return render_template('historial_de_amonestaciones.html')
-
-@app.route('/prestamos/amonestaciones/detalle')
-def prestamos_amonestaciones_historial_detalle():
-    return render_template('prestamos_detalle.html')
 
 if __name__ == '__main__':
     app.run()

@@ -2,14 +2,15 @@
 {% block title %}Membresias lista{% endblock %}
 
 {% block body %}
-<form>
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+<form action="{{url_for('consulta_miembro')}}" method="POST", id="form">
   <div class="container m-2 pb-2">
     <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
       <div class="col-6">
-        <input type="text" class="form-control" id="IDMEMBRESIA" placeholder="ID MEMBRESÍA">
+        <input type="number" class="form-control" id="ID" name="ID" placeholder="ID">
       </div>
       <div class="col-6">
-        <button type="submit" class="btn btn-primary small ml-2 btn-dark">Consulta</button>
+        <button type="submit" class="btn btn-primary small ml-3 btn-dark">Consulta</button>
       </div>
     </div>
   </div>
@@ -19,27 +20,39 @@
   <thead>
     <tr>
       <th scope="col">ID Membresia</th>
-      <th scope="col">Nombre</th>
+      <th scope="col">ID Usuario</th>
       <th scope="col">Fecha de nacimiento</th>
       <th scope="col">Domicilio</th>
-      <th scope="col">Estatus</th>
-      <th scope="col">Fecha de expiración</th>
-      <th scope="col">Correo electrónico</th>
-      <th scope="col">Fecha de expedición</th>
+      <th scope="col">Fecha de expiracion</th>
+      <th scope="col">Correo</th>
+      <th scope="col">Fecha de expedicon</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Opciones</th>
 
     </tr>
   </thead>
   <tbody>
-      <!--
+    {% for miembro in miembros %}
     <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-  -->
-  </tbody>
-</table>
+      <td> {{miembro.0}}</td>
+      <td> {{miembro.1}}</td>
+      <td> {{miembro.2}}</td>
+      <td> {{miembro.3}}</td>
+      <td> {{miembro.4}}</td>
+      <td> {{miembro.5}}</td>
+      <td> {{miembro.6}}</td>
+      {% if miembro.7 == 1%}
+      <td> Vigente</td>
+      {% else%}
+      <td> Vencida/Anulada</td> 
+      {% endif %}
 
-</form>
+      <td> 
+        <a class="w-100 " href="/membresia/lista/edit/{{miembro.0}}">Editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
 {% endblock %}

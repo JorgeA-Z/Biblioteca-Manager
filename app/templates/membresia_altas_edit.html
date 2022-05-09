@@ -5,31 +5,31 @@
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
 
 <div class="container mt-5">
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endif %}
-    <a href="/membresia/lista/usuarios">
+    <a href="/membresia/lista">
         <img src="{{ url_for('static', filename='img/arrow_back_black_24dp.svg') }}" alt="" width="30" height="24">
     </a>
-    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
     <div class="row d-flex justify-content-center">
         <div class="col">
-            <form action="{{url_for('add_miembro')}}" method="POST", id="form">
+            <form action="{{url_for('edited_membresia')}}" method="POST", id="form">
                 <div class="row px-2">
                     
                     <div class="col mt-2">
 
-                        <label for="staticEmail2" class="form-control text-muted">{{id.0 + 1}}</label>
-                        <input type="hidden" class="form-control" id="IDMEMBRESIA" name="IDMEMBRESIA" placeholder="IDMEMBRESIA" value="{{id}}" required>
+                        <label for="staticEmail2" class="form-control text-muted">{{miembro.0}}</label>
+                        <input type="hidden" class="form-control" id="IDMEMBRESIA" name="IDMEMBRESIA" placeholder="IDMEMBRESIA" value="{{miembro.0}}" required>
                         <small id="IDMEMBRESIA" class="form-text text-muted">
                             ID Membresia. Autogenerada.
                         </small>
                     </div>
                     <div class="col mt-2">
-                        <label for="staticEmail2" class="form-control text-muted">{{usuario}}</label>
-                        <input type="hidden" class="form-control" id="IDUSUARIO" name="IDUSUARIO" placeholder="{{usuario}}" value="{{usuario}}"required>
+                        <label for="staticEmail2" class="form-control text-muted">{{miembro.0}}</label>
+                        <input type="hidden" class="form-control" id="IDUSUARIO" name="IDUSUARIO" placeholder="ID USUARIO" value="{{miembro.1}}" required>
                         <small id="IDUSUARIO" class="form-text text-muted">
                             ID Usuario.
                         </small>
@@ -40,12 +40,12 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="text" class="form-control" id="DOMICILIO" name="DOMICILIO" placeholder="Domicilio" required>
+                        <input type="text" class="form-control" id="DOMICILIO" name="DOMICILIO" placeholder="Domicilio" value="{{miembro.3}}" required>
                     </div>
                 </div>
                 <div class="row px-2">
                     <div class="col mt-3">
-                        <input type="text" class="form-control" placeholder="Correo electronico" id="CORREO" name="CORREO" required>
+                        <input type="text" class="form-control" placeholder="Correo electronico" id="CORREO" name="CORREO" value="{{miembro.5}}" required>
                         <small id="CorreoHelpBlock" class="form-text text-muted">
                             Correo electronico.
                         </small>
@@ -55,7 +55,7 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="date" class="form-control"  id="NACIMIENTO" name="NACIMIENTO" required>
+                        <input type="date" class="form-control"  id="NACIMIENTO" name="NACIMIENTO" value="{{miembro.2}}" required>
                         <small id="NACIMIENTOHelpBlock" class="form-text text-muted">
                             Fecha de nacimiento.
                         </small>
@@ -63,10 +63,19 @@
                     
                     <div class="col mt-3">
                         <select class="form-control" id="ESTADO" name="ESTADO" required>
+                            {% if miembro.7 == 1 %}
+                            <option selected disabled>Choose...</option>
+                            <option selected value="2" >Renovar</option>
+                            <option selected value="0" >Vencida/Anulada</option>
                             <option selected value="1" >Vigente</option>
+                            {% else %}
+                            <option selected disabled>Choose...</option>
+                            <option selected value="2" >Renovar</option>
+                            <option selected value="0" >Vencida/Anulada</option>
+                            {% endif%}
                         </select>
                         <small id="DañosHelpBlock" class="form-text text-muted" required>
-                            Estado de la membresía.
+                            Estado de la membresía y/o renovación de la misma.
                         </small>
                     </div>
                     
@@ -74,9 +83,8 @@
 
                 <div class="row px-2">
                     <div class="col mt-3">
-                        <button type="submit" class="btn btn-dark">Registrar</button>                  
+                        <button type="submit" class="btn btn-dark">Guardar cambios</button>             
                     </div>
-
                 </div>
 
             </form>
