@@ -64,11 +64,11 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="text" class="form-control" placeholder="Correo" id="Correo" name="Correo" required>
+                        <input type="text" class="form-control" placeholder="Correo" id="CORREO" name="CORREO" required>
                     </div>
                     
                     <div class="col mt-3">
-                        <select class="form-control" id="Estado" name="Estado">
+                        <select class="form-control" id="ESTADO" name="ESTADO">
                             <option selected value="1">Activo</option>
                         </select>
                         <small id="EstadoHelpBlock" class="form-text text-muted">
@@ -77,7 +77,7 @@
                     </div>
                     
                     <div class="col mt-3">
-                        <input type="number" class="form-control" placeholder="Salario diario" id="Salario" name="Salario" required>
+                        <input type="number" class="form-control" placeholder="Salario diario" id="SALARIO" name="SALARIO" required>
                     </div>
                     
                 </div>
@@ -97,4 +97,68 @@
 
 
 </div>
+<script>
+    
+    (function() {
+        'use strict';
+       
+        let detener = false
+
+        const RFC = document.getElementById("RFC")
+        const NOMBRE  = document.getElementById("NOMBRE")
+        const DOMICILIO  = document.getElementById("DOMICILIO")
+        const CONTRASEÑA  = document.getElementById("CONTRASEÑA")
+        const PUESTO  = document.getElementById("CARGO")
+        const CORREO  = document.getElementById("CORREO")
+        const ESTADO  = document.getElementById("ESTADO")
+        const SALARIO = document.getElementById("SALARIO")
+       
+        let regrexCORREO = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+        
+        let regrexNUMBERFloat = /^[0-9]+([.])?([0-9]+)?$/
+       
+        let regrexRFC =  /^[A-Z&Ñ]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]$/
+
+        const form = document.getElementById("form")
+
+        form.addEventListener("submit", e=>{
+            if(!regrexCORREO.test(CORREO.value)){
+                detener = true
+                CORREO.classList.add('is-invalid')
+
+            }else
+            {
+                CORREO.classList.add('is-valid')
+            }
+
+            if(!regrexRFC.test(RFC.value)){
+                detener = true
+                RFC.classList.add('is-invalid')
+
+            }else
+            {
+                RFC.classList.add('is-valid')
+            }
+
+            if(!regrexNUMBERFloat.test(SALARIO.value))
+            {
+                detener = true
+                SALARIO.classList.add('is-invalid')
+
+            }else
+            {
+                SALARIO.classList.add('is-valid')
+
+            }
+            if(detener == true)
+            {
+                e.preventDefault()
+                e.stopPropagation()
+                detener = false
+            }
+
+        })
+
+      })();
+</script>
 {% endblock %}
