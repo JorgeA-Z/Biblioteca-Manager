@@ -112,7 +112,13 @@
         const CORREO  = document.getElementById("CORREO")
         const ESTADO  = document.getElementById("ESTADO")
         const SALARIO = document.getElementById("SALARIO")
+        
+        NOMBRE.classList.add('is-valid')
+        DOMICILIO.classList.add('is-valid')
        
+        CONTRASEÑA.classList.add('is-valid')
+        CORREO.classList.add('is-valid')
+        
         let regrexCORREO = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
         
         let regrexNUMBERFloat = /^[0-9]+([.])?([0-9]+)?$/
