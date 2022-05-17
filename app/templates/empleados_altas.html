@@ -2,44 +2,99 @@
 {% block title %}Empleado altas{% endblock %}
 
 {% block body %}
+
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
-<form>
-    <div class="form-group px-2">
-        <label for="Nombre">Nombre</label>
-        <input type="text" class="form-control" id="Nombre">
+
+
+<div class="container mt-5">
+    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
     </div>
-    <div class="form-group px-2">
-        <label for="Domicilio">Domicilio</label>
-        <input type="text" class="form-control" id="Domicilio">
-    </div>
-    <div class="form-group px-2">
-        <label for="Correo">Correo electrónico</label>
-        <input type="text" class="form-control" id="Correo">
-    </div>
-    <div class="form-group px-2">
-        <label for="Puesto">Puesto</label>
-        <select class="form-control" id="Puesto">
-            <option value="Bibliotecario">Bibliotecario</option>
-            <option value="Administrador">Administrador</option>
-            <option value="Jefe bibliotecario">Jefe bibliotecario</option>
-        </select>
+    {% endif %}
+
+    <div class="row d-flex justify-content-center">
+        <div class="col">
+            <form action="{{url_for('add_empleados')}}" method="POST", id="form">
+                <div class="row px-2">
+                    
+                    <div class="col mt-2">
+                        <input type="text" class="form-control" id="RFC" name="RFC" placeholder="RFC" required>
+                        <small id="RFCNHelpBlock" class="form-text text-muted">
+                            Registro Federal de Contribuyentes.
+                        </small>
+                    </div>
+                    <div class="col mt-2">
+                        <input type="text" class="form-control" id="NOMBRE" name="NOMBRE" placeholder="Nombre" required>
+                    </div>
+                    
+                </div>
+                
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" id="Domicilio" name="Domicilio" placeholder="Domicilio" required>
+                    </div>
+
+                </div>
+
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA" placeholder="Contraseña" required>
+                    </div>
+
+                    <div class="col mt-3">
+    
+                        <select class="form-control" id="CARGO" name="CARGO">
+                            <option selected disabled>Choose...</option>
+                            <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+                            <option value="JEFE">JEFE</option>
+                            <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+
+                        </select>
+                        <small id="CargoHelpBlock" class="form-text text-muted">
+                            Puesto del empleado.
+                        </small>
+
+                    </div>
+                </div>
+                
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="text" class="form-control" placeholder="Correo" id="Correo" name="Correo" required>
+                    </div>
+                    
+                    <div class="col mt-3">
+                        <select class="form-control" id="Estado" name="Estado">
+                            <option selected value="1">Activo</option>
+                        </select>
+                        <small id="EstadoHelpBlock" class="form-text text-muted">
+                            Estado del empleado.
+                        </small>
+                    </div>
+                    
+                    <div class="col mt-3">
+                        <input type="number" class="form-control" placeholder="Salario diario" id="Salario" name="Salario" required>
+                    </div>
+                    
+                </div>
+
+                <div class="row px-2">
+                    <div class="col mt-3">
+                        <button type="submit" class="btn btn-dark">Registrar</button>                  
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
         
     </div>
-    <div class="form-group px-2">
-        <label for="Telefono">Número de teléfono</label>
-        <input type="text" class="form-control" id="Telefono">
-    </div>
-    <div class="form-row px-2">
-        <div class="form-group col-md-2">
-            <label for="Salario">Salario diario</label>
-            <input type="text" class="form-control" id="Salario">
-        </div>
-        <div class="form-group col-md-2">
-            <label for="RFC">RFC</label>
-            <input type="text" class="form-control" id="RFC">
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary small ml-2 btn-dark" onclick=Submitt()>Submit</button>
 
-</form>
+
+</div>
 {% endblock %}

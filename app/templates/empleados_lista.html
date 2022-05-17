@@ -2,14 +2,14 @@
 {% block title %}Empleados lista{% endblock %}
 
 {% block body %}
-<form>
+<form action="" method="POST", id="form">
   <div class="container m-2 pb-2">
     <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
       <div class="col-6">
-        <input type="text" class="form-control" id="RFC" placeholder="RFC">
+        <input type="text" class="form-control" id="RFC" name="RFC" placeholder="RFC">
       </div>
       <div class="col-6">
-        <button type="submit" class="btn btn-primary small ml-2 btn-dark">Consulta</button>
+        <button type="submit" class="btn btn-primary small ml-3 btn-dark">Consulta</button>
       </div>
     </div>
   </div>
@@ -18,30 +18,21 @@
 <table class="table">
   <thead>
     <tr>
-        <th scope="col">RFC</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Fecha de ingreso</th>
-        <th scope="col">Número de Teléfono</th>
-        <th scope="col">Salario diario</th>
-        <th scope="col">Cargo</th>
-        <th scope="col">Domicilio</th>
-        <th scope="col">Correo electrónico</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!--
-        TEXTO DE PRUEBA
-        -->
-      <tr>
-        <th scope="row">ZENJ010118HJCPVRA2</th>
-        <td>Jorge Angel Zepeda Navarrete</td>
-        <td>16/04/2022</td>
-        <td>3221095731</td>
-        <td>3000</td>
-        <td>Administrador</td>
-        <td>Atlas 1287, GDL JAL</td>
-        <td>crachsmanHD@gmail.com</td>
-      </tr>
-    </tbody>
-  </table>
+      <th scope="col">RFC</th>
+      <th scope="col">Domicilio</th>
+      <th scope="col">Puesto</th>
+      <th scope="col">Correo electrónico</th>
+      <th scope="col">Salario</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+
+    </tr>
+  </tbody>
+
+</table>
 {% endblock %}

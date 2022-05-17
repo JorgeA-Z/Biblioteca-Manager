@@ -2,13 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 
-from websockets import Data
-
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Password1.'
+app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'biblioteca'
 mysql = MySQL(app)
 
@@ -161,8 +159,7 @@ def add_libro(id):
     data3 = cur.fetchone()
 
     if(data2 == None):
-        data2 = (0)
-
+        data2 = (0, )
 
     return render_template('libros_altas.html', titulo=data, id=data2, ejemplar= data3)
 
@@ -249,6 +246,24 @@ def empleados():
 
 @app.route('/empleados/altas')
 def empleados_altas():
+    return render_template('empleados_altas.html')
+
+@app.route('/empleados/altas', methods=['POST'])
+def add_empleados():
+    if request.method == 'POST':
+        a = request.form['RFC']
+        b = request.form['NOMBRE']
+        c = request.form['Domicilio']
+        d = request.form['CONTRASEÑA']
+        e = request.form['CARGO']
+        f = request.form['Correo']
+        g = request.form['Estado']
+        h = request.form['Salario']
+
+        print(a, b, c, d, e, f, g, h)
+
+
+
     return render_template('empleados_altas.html')
 
 @app.route('/empleados/lista')
