@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -252,23 +253,72 @@ def empleados_altas():
 def add_empleados():
     if request.method == 'POST':
         a = request.form['RFC']
-        b = request.form['NOMBRE']
-        c = request.form['Domicilio']
-        d = request.form['CONTRASEÑA']
-        e = request.form['CARGO']
-        f = request.form['Correo']
-        g = request.form['Estado']
-        h = request.form['Salario']
+        b = request.form['CONTRASEÑA']
+        c = request.form['NOMBRE']
+        d = request.form['TELEFONO']
+        e = request.form['SALARIO']
+        f = request.form['CARGO']
+        g = request.form['DOMICILIO']
+        h = request.form['CORREO']
+        #g = request.form['Estado']
 
         print(a, b, c, d, e, f, g, h)
 
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO EMPLEADO (RFC, CONTRASEÑA, NOMBRE, TELEFONO, SALARIO, CARGO, DOMICILIO, CORREO) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g, h))
+            mysql.connection.commit()
+        
+        except Exception as e:
+            return render_template('empleados_altas.html', error = e)
 
 
     return render_template('empleados_altas.html')
 
 @app.route('/empleados/lista')
 def empleados_lista():
-    return render_template('empleados_lista.html')
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM EMPLEADO')
+    data = cur.fetchall()
+    return render_template('empleados_lista.html', empleados = data)
+
+@app.route('/empleados/lista/edit/<id>')
+
+def edit_empleado(id):
+
+    cur = mysql.connection.cursor()
+
+    cur.execute( "SELECT * FROM EMPLEADO WHERE RFC=%s", (id,) )
+
+    data = cur.fetchone()
+
+    return render_template('empleados_altas_edit.html', empleado = data)
+
+@app.route('/empleados/lista/edited', methods=['POST'])
+def edited_empleado():
+    if request.method == 'POST':
+        a = request.form['RFC']
+        a2 = request.form['NRFC']
+        b = request.form['CONTRASEÑA']
+        c = request.form['NOMBRE']
+        d = request.form['TELEFONO']
+        e = request.form['SALARIO']
+        f = request.form['CARGO']
+        g = request.form['DOMICILIO']
+        h = request.form['CORREO']
+        i = request.form['ESTADO']
+
+        try:
+            cur = mysql.connection.cursor()
+            
+            cur.execute('UPDATE EMPLEADO SET RFC=%s, CONTRASEÑA=%s, NOMBRE=%s, TELEFONO=%s, SALARIO=%s, CARGO=%s, DOMICILIO=%s, CORREO=%s, ESTADO=%s WHERE RFC=%s', (a2, b, c, d, e, f, g, h, i, a))
+            
+            mysql.connection.commit()
+        
+        except Exception as e:
+            return render_template('empleados.html', error = e)
+    
+    return redirect(url_for('empleados_lista'))
 
 @app.route('/membresia')
 def membresia():
@@ -440,6 +490,35 @@ def consulta_usuario():
 def prestamos():
     return render_template('prestamos.html')
 
+@app.route('/prestamos/login')
+def prestamos_login():
+    return render_template('prestamos_login.html')
+
+@app.route('/prestamos/login?', methods=['POST'])
+def prestamos_loged():
+    if request.method == 'POST':
+        a = request.form['MEMBRESIA']
+
+        cur = mysql.connection.cursor()
+
+        sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA=%s'
+        
+        cur.execute(sql, (a))
+
+        try:
+            data = cur.fetchone()
+            if data == None:
+                return render_template('prestamos_login.html', error = 'No se encontro al usuario')
+
+        except Exception as e:
+                return render_template('prestamos_login.html', error = e)
+        
+        
+    return render_template('prestamos_nuevo.html', miembro = data)
+
+@app.route('/prestamos/nuevo')
+def prestamos_nuevo():
+    return render_template('prestamos_nuevo.html')
 
 if __name__ == '__main__':
     app.run()

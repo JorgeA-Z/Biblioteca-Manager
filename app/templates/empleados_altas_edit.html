@@ -7,7 +7,9 @@
 
 
 <div class="container mt-5">
-    
+    <a href="/empleados/lista">
+        <img src="{{ url_for('static', filename='img/arrow_back_black_24dp.svg') }}" alt="" width="30" height="24">
+    </a>
     {% if error %}
     <div class="alert alert-danger" role="alert">
       {{ error }}
@@ -16,17 +18,18 @@
 
     <div class="row d-flex justify-content-center">
         <div class="col">
-            <form action="{{url_for('add_empleados')}}" method="POST", id="form">
+            <form action="{{url_for('edited_empleado')}}" method="POST", id="form">
                 <div class="row px-2">
                     
                     <div class="col mt-2">
-                        <input type="text" class="form-control" id="RFC" name="RFC" placeholder="RFC" required>
+                        <input type="text" class="form-control" id="NRFC" name="NRFC" placeholder="NRFC" value="{{empleado.0}}" required>
+                        <input type="hidden" class="form-control" id="RFC" name="RFC" placeholder="RFC" value="{{empleado.0}}" required>
                         <small id="RFCNHelpBlock" class="form-text text-muted">
                             Registro Federal de Contribuyentes.
                         </small>
                     </div>
                     <div class="col mt-2">
-                        <input type="text" class="form-control" id="NOMBRE" name="NOMBRE" placeholder="Nombre" required>
+                        <input type="text" class="form-control" id="NOMBRE" name="NOMBRE" placeholder="Nombre" value ="{{empleado.2}}" required>
                     </div>
                     
                 </div>
@@ -34,10 +37,10 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="text" class="form-control" id="DOMICILIO" name="DOMICILIO" placeholder="Domicilio" required>
+                        <input type="text" class="form-control" id="DOMICILIO" name="DOMICILIO" placeholder="Domicilio" value="{{empleado.7}}"required>
                     </div>
                     <div class="col mt-3">
-                        <input type="number" class="form-control" id="TELEFONO" name="TELEFONO" placeholder="Telefono" required>
+                        <input type="number" class="form-control" id="TELEFONO" name="TELEFONO" placeholder="Telefono" value = "{{empleado.4}}"required>
                         <small id="TELEFONOHelpBlock" class="form-text text-muted">
                             Formatos aceptados: (123) 456-7890, 123-456-7890, 1234567890, +31636363634, etc..
                         </small>
@@ -48,7 +51,7 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA" placeholder="Contraseña" value = "{{empleado.1}}" required>
                         <small id="PASSWORDHelpBlock" class="form-text text-muted">
                             Contraseña minima de 8 caracteres y máxima de 16 caracteres.
                         </small>
@@ -57,9 +60,22 @@
                     <div class="col mt-3">
     
                         <select class="form-control" id="CARGO" name="CARGO" required>
-                            <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+                            {% if empleado.6 == 'BIBLIOTECARIO' %}
+                            <option selected value="BIBLIOTECARIO">BIBLIOTECARIO</option>
                             <option value="JEFE">JEFE</option>
                             <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                            
+                            {% elif empleado.6 == 'JEFE' %}
+
+                            <option selected value="JEFE">JEFE</option>
+                            <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+                            <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                            
+                            {% else %}
+                            <option selected value="ADMINISTRADOR">ADMINISTRADOR</option>
+                            <option value="JEFE">JEFE</option>
+                            <option value="BIBLIOTECARIO">BIBLIOTECARIO</option>
+                            {% endif %}
 
                         </select>
                         <small id="CargoHelpBlock" class="form-text text-muted">
@@ -72,12 +88,14 @@
                 <div class="row px-2">
                     
                     <div class="col mt-3">
-                        <input type="text" class="form-control" placeholder="Correo" id="CORREO" name="CORREO" required>
+                        <input type="text" class="form-control" placeholder="Correo" id="CORREO" name="CORREO" value ="{{empleado.9}}" required>
                     </div>
                     
                     <div class="col mt-3">
                         <select class="form-control" id="ESTADO" name="ESTADO" required>
                             <option selected value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+
                         </select>
                         <small id="EstadoHelpBlock" class="form-text text-muted">
                             Estado del empleado.
@@ -85,7 +103,7 @@
                     </div>
                     
                     <div class="col mt-3">
-                        <input type="number" class="form-control" placeholder="Salario diario" id="SALARIO" name="SALARIO" step="any" required>
+                        <input type="number" class="form-control" placeholder="Salario diario" id="SALARIO" name="SALARIO" step="any" value="{{empleado.5}}" required>
                     </div>
                     
                 </div>

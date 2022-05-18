@@ -1,6 +1,9 @@
 {% extends './layout.html' %}
 
 {% block head %}
+
+
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
@@ -17,6 +20,13 @@
 {% block title %}Empleados{% endblock %}
 
 {% block body %}
+
+{% if error %}
+  <div class="alert alert-danger" role="alert">
+{{ error }}
+  </div>
+{% endif %}
+
 <div class="jumbotron jumbotron-fluid m-5 pb-5">
   <div class="container">
     <h1 class="display-4">Bienvenido al apartado de empleados</h1>

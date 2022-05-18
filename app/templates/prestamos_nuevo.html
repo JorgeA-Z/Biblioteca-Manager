@@ -1,0 +1,82 @@
+{% extends './prestamos.html' %}
+
+{% block title %}Préstamos Nuevo{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+<form action="{{url_for('consulta_miembro')}}" method="POST" , id="form">
+    <div class="container m-2 pb-2">
+        <div class="row">
+
+            <div class="col">
+                <input type="number" class="form-control" id="ID" name="ID" placeholder="ID">
+            </div>
+
+            <div class="col">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-success">Añadir</button>
+                    <button type="button" class="btn btn-danger">Eliminar</button>
+                    <button type="button" class="btn btn-warning">Realizar</button>
+                </div>
+                <small id="OpcionesHelpBlock" class="form-text text-muted">
+                    Opciones del prestamo.
+                </small>
+            </div>
+                
+            
+        </div>
+    </div>
+</form>
+<div class="row px-2">
+    <div class="col">
+        <div class="alert alert-success" role="alert">
+            Libro añadido al cajon de prestamos
+        </div>
+        <div class="alert alert-danger" role="alert">
+            Libro no encontrado
+        </div>
+        <div class="alert alert-warning" role="alert">
+            Se supero la cantidad de ejemplares que pueden ser sujetos a prestamo
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID Membresia</th>
+            <th scope="col">Fecha de entrega</th>
+            <th scope="col">Fecha de solicitud</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        </tr>
+
+    </tbody>
+
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID libro</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Ejemplar</th>
+            <th scope="col">Costo</th>
+            <th scope="col">Daños</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        </tr>
+
+    </tbody>
+
+</table>
+<script>
+    window.addEventListener("beforeunload", function (event) {
+        event.returnValue = "\o/";
+    });
+</script>
+{% endblock %}

@@ -19,19 +19,37 @@
   <thead>
     <tr>
       <th scope="col">RFC</th>
-      <th scope="col">Domicilio</th>
-      <th scope="col">Puesto</th>
-      <th scope="col">Correo electrónico</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Ingreso</th>
+      <th scope="col">Telefono</th>
       <th scope="col">Salario</th>
+      <th scope="col">Cargo</th>
+      <th scope="col">Domicilio</th>
       <th scope="col">Estado</th>
+      <th scope="col">Correo electrónico</th>
       <th scope="col">Opciones</th>
     </tr>
   </thead>
   <tbody>
-
+    {% for empleado in empleados %}
     <tr>
+      <td> {{empleado.0}}</td>
+      <td> {{empleado.2}}</td>
+      <td> {{empleado.3}}</td>
+      <td> {{empleado.4}}</td>
+      <td> {{empleado.5}}</td>
+      <td> {{empleado.6}}</td>
+      <td> {{empleado.7}}</td>
+      <td> {{empleado.8}}</td>
+      <td> {{empleado.9}}</td>
+    
+      <td>
+        <a class="w-100 " href="/empleados/lista/edit/{{ empleado.0 }}">Editar</a>
+      </td>
+
 
     </tr>
+    {% endfor %}
   </tbody>
 
 </table>
