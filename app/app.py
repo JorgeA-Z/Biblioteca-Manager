@@ -1,19 +1,32 @@
-from tkinter.messagebox import NO
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
-
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'biblioteca'
+app.secret_key = 'BAD_SECRET_KEY'
+
 mysql = MySQL(app)
+
+@app.before_request
+def antes_de_cada_peticion():
+    ruta = request.path
+    # Si no ha iniciado sesión y no quiere ir a algo relacionado al login, lo redireccionamos al login
+    if ruta != "/login?" and ruta != "/login_user" and ruta != "/logout" and ruta != "/":
+        if session["usuario"] == None:
+            return redirect("/")
 
 @app.route('/')
 def login():
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session["usuario"] = None
+    return redirect(url_for('login'))
 
 @app.route('/login?')
 def login_error():
@@ -44,7 +57,8 @@ def login_user():
             return redirect(url_for('login_error'))
         
         #return render_template('login.html', error="Credenciales invalidas")
-
+        session["usuario"] = a
+        
         return redirect(url_for('index'))
 
 @app.route('/menu')
