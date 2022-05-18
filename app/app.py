@@ -347,7 +347,7 @@ def membresia_altas(idusuario):
     data = cur.fetchone()
 
     if data == None:
-        data = (0)
+        data = (0, )
 
     return render_template('membresia_altas.html', id=data, usuario=idusuario)
 
@@ -370,11 +370,8 @@ def add_miembro():
         
         cur = mysql.connection.cursor()
 
-        sql = 'SELECT * FROM USUARIO where IDUSUARIO={0}'.format(b)
         
         try:
-            cur.execute(sql)
-            data = cur.fetchone()
 
             sql = 'SELECT * FROM MEMBRESIA where IDUSUARIO={0}'.format(b)
             cur.execute(sql)
@@ -388,7 +385,7 @@ def add_miembro():
             cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
             data = cur.fetchone()
             if data == None:
-                data = (0)
+                data = (0, )
 
             return render_template('membresia_altas.html', id = data, error = 'Error: No existe el usuario')
 
@@ -407,10 +404,10 @@ def add_miembro():
             cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
             data = cur.fetchone()
             if data == None:
-                data = (0)
+                data = (0, )
             return render_template('membresia_altas.html', id = data, error = 'El usuario no existe')
 
-        return redirect(url_for('membresia_altas'))
+        return redirect(url_for('membresia_lista'))
 
 @app.route('/membresia/lista/edit/<id>')
 def edit_member(id):
@@ -453,12 +450,82 @@ def edited_membresia():
     
     return redirect(url_for('membresia_lista'))
 
+@app.route('/membresia/altas/usuarios')
+def usuarios_altas():
+    cur = mysql.connection.cursor()
+    
+    cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO=(SELECT MAX(IDUSUARIO) FROM USUARIO)')
+    
+    data = cur.fetchone()
+
+    if data == None:
+        data = (0,)
+
+    return render_template('usuario_altas.html', id = data)
+
+
 @app.route('/membresia/lista/usuarios')
 def usuarios_lista():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM USUARIO')
     data = cur.fetchall()
     return render_template('usuarios_lista.html', usuarios = data)
+
+@app.route('/membresia/altas/usuarios', methods=['POST'])
+def add_usuario():
+    if request.method == 'POST':
+        b = request.form['NOMBRE']
+        c = request.form['CONTRASEÑA']
+        d = request.form['TIPO']
+        e = request.form['ESTADO']
+        f = request.form['TELEFONO']
+        
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO USUARIO (NOMBRE, CONTRASEÑA, TIPO, TELEFONO) VALUES(%s, %s, %s, %s)', (b, c, d, f))
+            mysql.connection.commit()
+        
+        except Exception as e:
+            cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO=(SELECT MAX(IDUSUARIO) FROM USUARIO)')
+    
+            data = cur.fetchone()
+            if data == None:
+                data = (0,)
+            
+            return render_template('usuario_altas.html', error = e, id = data)
+
+
+        return redirect(url_for('usuarios_lista'))
+
+@app.route('/membresia/altas/edit/<id>')
+def edit_usuario(id):
+
+    cur = mysql.connection.cursor()
+        
+    cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO={0}'.format(id))
+
+    data = cur.fetchone()
+
+    print(data)
+    
+    return render_template('usuario_altas_edit.html', usuario = data)
+
+
+@app.route('/membresia/altas/edited', methods=['POST'])
+def edited_usuario():
+    if request.method == 'POST':
+        a = request.form['ID']
+        b = request.form['NOMBRE']
+        c = request.form['TELEFONO']
+        d = request.form['ESTADO']
+        e = request.form['CONTRASEÑA']
+        f = request.form['TIPO']
+        
+        cur = mysql.connection.cursor()
+        cur.execute('UPDATE USUARIO SET NOMBRE=%s, TELEFONO=%s, ESTADO=%s, CONTRASEÑA=%s, TIPO=%s WHERE IDUSUARIO =%s', (b, c, d, e, f, a))
+        mysql.connection.commit()
+
+        return redirect(url_for('usuarios_lista'))
 
 @app.route('/membresia/lista/consulta', methods=['POST'])
 def consulta_miembro():

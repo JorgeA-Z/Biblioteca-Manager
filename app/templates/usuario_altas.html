@@ -1,0 +1,150 @@
+{% extends './membresia.html' %}
+{% block title %}Lista de Usuarios{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+    <div class="row d-flex justify-content-center">
+        <div class="col">
+            <form action="{{url_for('add_usuario')}}" method="POST", id="form">
+                <div class="row px-2">
+                    
+                    <div class="col mt-2">
+                        <label for="staticEmail2" class="form-control text-muted">{{id.0 + 1}}</label>
+                        <input type="hidden" class="form-control" id="ID" name="ID" placeholder="ID" required>
+                        <small id="IDNHelpBlock" class="form-text text-muted">
+                            Identificador del usuario. Generado automaticamente.
+                        </small>
+                    </div>
+                    <div class="col mt-2">
+                        <input type="text" class="form-control" id="NOMBRE" name="NOMBRE" placeholder="Nombre" required>
+                    </div>
+                    
+                </div>
+                
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="number" class="form-control" id="TELEFONO" name="TELEFONO" placeholder="Telefono" required>
+                        <small id="TELEFONOHelpBlock" class="form-text text-muted">
+                            Formatos aceptados: (123) 456-7890, 123-456-7890, 1234567890, +31636363634, etc..
+                        </small>
+                    </div>
+
+                    <div class="col mt-3">
+                        <select class="form-control" id="ESTADO" name="ESTADO" required>
+                            <option selected value="1">Activo</option>
+                        </select>
+                        <small id="EstadoHelpBlock" class="form-text text-muted">
+                            Estado del usuario.
+                        </small>
+                    </div>
+                
+                </div>
+
+                <div class="row px-2">
+                    
+                    <div class="col mt-3">
+                        <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA" placeholder="Contraseña" required>
+                        <small id="PASSWORDHelpBlock" class="form-text text-muted">
+                            Contraseña minima de 8 caracteres y máxima de 16 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="col mt-3">
+    
+                        <select class="form-control" id="TIPO" name="TIPO" required>
+                            <option value="VISITANTE">VISITANTE</option>
+                            <option value="UNIVERSITARIO">UNIVERSITARIO</option>
+                            <option value="DOCENTE">DOCENTE</option>
+                        </select>
+                        <small id="TipoHelpBlock" class="form-text text-muted">
+                            Tipo de usuario.
+                        </small>
+
+                    </div>
+                </div>
+                
+                <div class="row px-2">
+                    <div class="col mt-3">
+                        <button type="submit" class="btn btn-dark">Registrar</button>                  
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
+        
+    </div>
+
+
+</div>
+
+<script>
+    
+    (function() {
+        'use strict';
+       
+        let detener = false
+
+        const ID = document.getElementById("ID")
+        const NOMBRE  = document.getElementById("NOMBRE")
+        const CONTRASEÑA  = document.getElementById("CONTRASEÑA")
+        const TIPO  = document.getElementById("CARGO")
+        const ESTADO  = document.getElementById("ESTADO")
+        const TELEFONO = document.getElementById("TELEFONO")
+
+        
+        let regrexTELEFONO =  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+
+        let regrexCORREO = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+        
+        let regrexNUMBERFloat = /^[0-9]+([.])?([0-9]+)?$/
+        
+        let regrexRFC =  /^[A-Z&Ñ]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]$/
+        
+        const form = document.getElementById("form")
+
+        form.addEventListener("submit", e=>{
+
+            NOMBRE.classList.add('is-valid')
+            ID.classList.add('is-valid')
+            TIPO.classList.add('is-valid')
+            ESTADO.classList.add('is-valid')
+            
+            if(!regrexTELEFONO.test(TELEFONO.value)){
+                detener = true
+                TELEFONO.classList.add('is-invalid')
+
+            }else
+            {
+                TELEFONO.classList.add('is-valid')
+            }
+
+
+            if(CONTRASEÑA.value.length >= 8 && CONTRASEÑA.value.length <= 16)
+            {
+                CONTRASEÑA.classList.add('is-valid')
+            }else
+            {
+                detener = true
+                CONTRASEÑA.classList.add('is-invalid')
+            }
+            if(detener == true)
+            {
+                e.preventDefault()
+                e.stopPropagation()
+                detener = false
+            }
+
+        })
+
+      })();
+</script>
+{% endblock %}
