@@ -29,20 +29,22 @@
   </thead>
   <tbody>
     {% for libro in libros %}
-    {% if libro.5 == 1 %}
     <tr>
       <td> {{libro.0}}</td>
       <td> {{libro.1}}</td>
       <td> {{libro.2}}</td>
       <td> {{libro.3}}</td>
       <td> {{libro.4}}</td>
+      {% if libro.5 == 1 %}
       <td>Activo</td>
+      {% else %}
+      <td>Inactivo</td>
+      {% endif%}
       
       
       <td> 
         <a class="w-100 " href="/libros/lista/edit/{{libro.0}}">Editar</a>
       </td>
-    {% endif%}
 
 
     </tr>

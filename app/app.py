@@ -1,3 +1,5 @@
+from distutils.log import error
+from logging import warning
 from flask import Flask, render_template, request, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -11,6 +13,8 @@ app.secret_key = 'BAD_SECRET_KEY'
 
 mysql = MySQL(app)
 
+p = []
+l = []
 @app.before_request
 def antes_de_cada_peticion():
     ruta = request.path
@@ -102,7 +106,9 @@ def edit_titulo(id):
 @app.route('/libros/titulos/lista/edited', methods=['POST'])
 def edited_titulo():
     if request.method == 'POST':
-        a = request.form['ISBN']
+        a = request.form['NISBN']
+        a2 = request.form['ISBN']
+
         b = request.form['NOMBRE']
         c = request.form['AUTOR']
         d = request.form['EDICION']
@@ -110,7 +116,7 @@ def edited_titulo():
         f = request.form['EDITORIAL']
         
         cur = mysql.connection.cursor()
-        cur.execute('UPDATE TITULO SET NOMBRE=%s, AUTOR=%s, EDICION=%s, SCDD=%s, EDITORIAL=%s WHERE IDTITULO =%s', (b, c, d, e, f, a))
+        cur.execute('UPDATE TITULO SET IDTITULO=%s, NOMBRE=%s, AUTOR=%s, EDICION=%s, SCDD=%s, EDITORIAL=%s WHERE IDTITULO =%s', (a, b, c, d, e, f, a2))
         mysql.connection.commit()
 
         return redirect(url_for('titulos_lista'))
@@ -218,7 +224,7 @@ def add_libro_nuevo():
 @app.route('/libros/lista')
 def libros_lista():
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM LIBRO ORDER BY IDTITULO')
+    cur.execute('SELECT * FROM LIBRO ORDER BY IDTITULO DESC, ESTADO ASC')
     data = cur.fetchall()
     return render_template('libros_lista.html', libros = data)
 
@@ -577,16 +583,19 @@ def prestamos_login():
 
 @app.route('/prestamos/login?', methods=['POST'])
 def prestamos_loged():
+    global p, l
+
     if request.method == 'POST':
         a = request.form['MEMBRESIA']
 
         cur = mysql.connection.cursor()
 
-        sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA=%s'
+        sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA={0}'.format(a)
         
-        cur.execute(sql, (a))
 
         try:
+            cur.execute(sql)
+            
             data = cur.fetchone()
             if data == None:
                 return render_template('prestamos_login.html', error = 'No se encontro al usuario')
@@ -595,11 +604,73 @@ def prestamos_loged():
                 return render_template('prestamos_login.html', error = e)
         
         
-    return render_template('prestamos_nuevo.html', miembro = data)
+    #return render_template('prestamos_nuevo.html', miembro = data)
 
-@app.route('/prestamos/nuevo')
+    p.clear()
+    l.clear()
+
+    fecha = datetime.today()
+    td = timedelta(days = 3)
+    hoy = str(fecha.strftime('%Y-%m-%d'))
+    entrega = fecha + td
+    entrega = str(entrega.strftime('%Y-%m-%d'))
+    
+
+
+    cur = mysql.connection.cursor()
+
+    sql = 'SELECT MEMBRESIA.IDMEMBRESIA, USUARIO.NOMBRE FROM MEMBRESIA, USUARIO WHERE MEMBRESIA.IDMEMBRESIA =%s AND MEMBRESIA.IDUSUARIO=USUARIO.IDUSUARIO'
+        
+    cur.execute(sql, (a))
+    data = cur.fetchone() 
+    p.append(data[0])
+    p.append(data[1])
+    p.append(hoy)
+    p.append(entrega)
+
+    print(p)
+
+    return redirect(url_for('prestamos_nuevo'))
+
+@app.route('/prestamos/nuevo/')
 def prestamos_nuevo():
-    return render_template('prestamos_nuevo.html')
+    global p, l
+    return render_template('prestamos_nuevo.html', miembro = p, libros = l)
+
+@app.route('/prestamos/nuevo/add', methods=['POST'])
+def prestamo_add():
+    global p, l
+    if request.method == 'POST':
+        a = request.form['ID']
+        
+        cur = mysql.connection.cursor()
+
+        sql = 'SELECT * FROM LIBRO where IDLIBRO={0}'.format(a)
+        try:
+            cur.execute(sql)
+
+            data = cur.fetchone()
+            if data != None:
+                if data[5] != 1:
+                    return render_template('prestamos_nuevo.html', warning = 'Este libro no esta disponible para prestamo', miembro = p, libros = l)
+
+                sql = 'SELECT TITULO.NOMBRE, TITULO.IDTITULO, LIBRO.IDLIBRO, LIBRO.EJEMPLAR FROM LIBRO, TITULO where LIBRO.IDLIBRO={0} AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(a)
+                cur.execute(sql)
+                data = cur.fetchone()
+
+                if data not in l:
+                    l.append(data)
+                else:
+                    return render_template('prestamos_nuevo.html', warning = 'Este libro no esta disponible para prestamo', miembro = p, libros = l)
+            else:
+                return render_template('prestamos_nuevo.html', error = 'Este libro no existe', miembro = p, libros = l)
+
+
+        except Exception as e:
+            return render_template('prestamos_nuevo.html', error = e, miembro = p, libros = l)
+            
+
+    return render_template('prestamos_nuevo.html', success = str(data[2]) + ' | ' + str(data[0]) + ' | ' +str(data[1]) + ' | ' + str(data[3]) + ' | ', miembro = p, libros = l)
 
 if __name__ == '__main__':
     app.run()
