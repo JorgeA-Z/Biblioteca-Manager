@@ -683,6 +683,9 @@ def prestamo_add():
     if request.method == 'POST':
         a = request.form['ID']
         
+        if len(a) < 1:
+            return render_template('prestamos_nuevo.html',error = 'Este libro no existe' , miembro = p, libros = l)
+        
         cur = mysql.connection.cursor()
 
         sql = 'SELECT * FROM LIBRO where IDLIBRO={0}'.format(a)
@@ -718,6 +721,9 @@ def prestamo_delete():
 
     if request.method == 'POST':
         a = request.form['ID']
+        if len(a) < 1:
+            return render_template('prestamos_nuevo.html',error = 'Este libro no existe' , miembro = p, libros = l)
+
         for libro in l:
             if int(a) == int(libro[2]):
                 data = libro
@@ -748,8 +754,14 @@ def prestamo_do():
         else:
             return render_template('prestamos_nuevo.html',error = 'Cajon vacío' , miembro = p, libros = l)
 
-    
-        return redirect(url_for('prestamos'))
+        
+        cur = mysql.connection.cursor()
+
+        cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO=(SELECT MAX(IDPRESTAMO) FROM PRESTAMO) AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO')
+
+        data = cur.fetchall()
+
+        return render_template('detalle.html', libros = data, status = 'Solicitud realizada correctamente', miembros = p)    
 
 @app.route('/prestamos/devolver')
 def prestamo_devolucion():
@@ -825,7 +837,7 @@ def consulta_prestamo():
         try:
             cur = mysql.connection.cursor()
 
-            sql = 'SELECT * FROM PRESTAMO where IDPRESTAMO={0}'.format(a)
+            sql = 'SELECT * FROM PRESTAMO where IDPRESTAMO={0} AND IDPRESTAMO NOT IN(SELECT IDPRESTAMO FROM COBRO)'.format(a)
         
             cur.execute(sql)
         
@@ -903,6 +915,108 @@ def adeudos_lista():
     data = cur.fetchall()
     
     return render_template('adeudo.html', adeudos = data)
+
+@app.route('/prestamos/adeudos/consulta', methods=['POST'])
+def consulta_adeudo():
+    if request.method == 'POST':
+
+        a = request.form['FOLIO']
+        try:
+            cur = mysql.connection.cursor()
+
+            sql = 'SELECT * FROM COBRO where IDCOBRO={0}'.format(a)
+        
+            cur.execute(sql)
+        
+            data = cur.fetchall()
+            
+        except Exception as e:
+            return redirect(url_for('adeudos_lista'))
+
+    return render_template('adeudo.html', adeudos = data)
+
+
+@app.route('/prestamos/adeudos/detalle<FOLIO>')
+def adeudo_detalle(FOLIO):
+    cur = mysql.connection.cursor()
+
+    sql = '''
+    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE 
+    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO 
+    
+    WHERE COBRO.IDCOBRO={0}
+    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
+    AND DETALLECOBRO.IDCOBRO = COBRO.IDCOBRO
+    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO 
+    AND TITULO.IDTITULO = LIBRO.IDTITULO 
+    
+    '''.format(FOLIO)
+
+    cur.execute(sql)
+
+    data = cur.fetchall()
+    monto = 0
+    for libro in data:
+        monto = monto +  libro[4]
+    print(monto)
+
+    sql = '''
+    SELECT COBRO.IDCOBRO, COBRO.ENTREGA, COBRO.ENTREGAREAL FROM COBRO WHERE COBRO.IDCOBRO={0}
+    '''.format(FOLIO)
+
+    cur.execute(sql)
+
+    info = cur.fetchone()
+
+    return render_template('detalle_cobro.html', libros = data, monto = monto, fechas= info)      
+
+@app.route('/prestamos/adeudos/do<FOLIO>')
+def adeudo_do(FOLIO):
+    cur = mysql.connection.cursor()
+
+    sql = '''
+    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE 
+    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO 
+    
+    WHERE COBRO.IDCOBRO={0}
+    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
+    AND DETALLECOBRO.IDCOBRO = COBRO.IDCOBRO
+    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO 
+    AND TITULO.IDTITULO = LIBRO.IDTITULO 
+    
+    '''.format(FOLIO)
+
+    cur.execute(sql)
+
+    data = cur.fetchall()
+    monto = 0
+    for libro in data:
+        monto = monto +  libro[4]
+    print(monto)
+
+    sql = '''
+    SELECT COBRO.IDCOBRO, COBRO.ENTREGA, COBRO.ENTREGAREAL FROM COBRO WHERE COBRO.IDCOBRO={0}
+    '''.format(FOLIO)
+
+    cur.execute(sql)
+
+    info = cur.fetchone()
+
+    return render_template('realizar_cobro.html', libros = data, monto = monto, fechas= info)    
+@app.route('/prestamos/adeudos/resolve<FOLIO>')
+def adeudo_resolve(FOLIO):
+    print(FOLIO)
+    cur = mysql.connection.cursor()
+    
+    cur.execute('UPDATE COBRO SET ESTADO=%s WHERE IDCOBRO=%s', (0, FOLIO))
+
+    mysql.connection.commit()
+
+    cur.execute('UPDATE DETALLECOBRO SET ESTADO=%s WHERE IDCOBRO=%s', (0, FOLIO))
+    mysql.connection.commit()
+
+    return redirect(url_for('adeudos_lista'))
+
 if __name__ == '__main__':
     app.run()
 

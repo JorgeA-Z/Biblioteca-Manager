@@ -13,6 +13,41 @@
       </div>
     </div>
   </div>
+  {% if status %}
+  <table class="table">
+    <thead>
+      <tr>
+        <div class="row px-2">
+          <div class="col">
+              <div class="alert alert-success" role="alert">
+                  {{status}}
+                </div>
+              </div>
+            </div>
+          </tr>
+
+          <tr>
+            <th scope="col">ID Membresia</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Fecha de solicitud</th>
+            <th scope="col">Fecha de entrega</th>
+            <th scope="col">Folio</th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{miembros.0}}</td>
+        <td>{{miembros.1}}</td>
+        <td>{{miembros.2}}</td>
+        <td>{{miembros.3}}</td>
+        <td>{{miembros.4}}</td>
+      </tr>
+
+    </tbody>
+</table>
+      
+{% endif %}
+
 <table class="table">
     <thead>
         <tr>

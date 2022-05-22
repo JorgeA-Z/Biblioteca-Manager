@@ -6,7 +6,7 @@
 
 <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
 
-<form id="form">
+<form action="{{url_for('consulta_adeudo')}}" method="POST" id="form">
     <div class="container m-2 pb-2">
       <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
         <div class="col-6">
@@ -41,8 +41,8 @@
             <td>{{adeudo.3}}</td>
             <td>{{adeudo.4}}</td>
             <td>
-                <a class="btn btn-danger" href="">Resolver</a>
-                <a class="btn btn-info" href="">Detalle</a>
+                <a class="btn btn-danger" href="/prestamos/adeudos/do{{adeudo.0}}">Resolver</a>
+                <a class="btn btn-info" href="/prestamos/adeudos/detalle{{adeudo.0}}">Detalle</a>
             </td>
         </tr>
 
@@ -54,8 +54,7 @@
             <td>{{adeudo.3}}</td>
             <td>{{adeudo.4}}</td>
             <td>
-                <a class="btn btn-danger" href="">Resolver</a>
-                <a class="btn btn-info" href="">Detalle</a>
+              <a class="btn btn-info" href="/prestamos/adeudos/detalle{{adeudo.0}}">Detalle</a>
             </td>
         </tr>
 

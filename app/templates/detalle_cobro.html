@@ -1,0 +1,61 @@
+{% extends './prestamos.html' %}
+
+{% block title %}Detalle de prestamo{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a href="/prestamos/adeudos">
+                    <img src="{{ url_for('static', filename='img/arrow_back_black_24dp.svg') }}" alt="" width="30"
+                        height="24">
+                </a>
+            </th>
+            <th scope="col">Folio Cobro</th>
+            <th scope="col">Fecha de entrega</th>
+            <th scope="col">Fecha real de entrega</th>
+            <th scope="col">Monto total</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+        <tr>
+          <td></td>
+          <td>{{fechas.0}}</td>
+          <td>{{fechas.1}}</td>
+          <td>{{fechas.2}}</td>          
+          <td>{{monto}}</td>
+
+        </tr>
+    </tbody>
+
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID Libro</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Daños</th>
+            <th scope="col">Monto</th>
+
+        </tr>
+    </thead>
+    <tbody>
+          {% for libro in libros %}
+          <tr>
+            <td>{{libro.1}}</td>
+            <td>{{libro.2}}</td>
+            <td>{{libro.3}}</td>
+            <td>{{libro.5}}</td>
+            <td>{{libro.4}}</td>
+
+          </tr>
+          {% endfor %}
+
+    </tbody>
+</table>
+{% endblock %}
