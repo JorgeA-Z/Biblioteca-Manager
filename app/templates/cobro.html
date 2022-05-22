@@ -39,6 +39,9 @@
             <tr>
                 <th></th>
                 <td>{{detalle.0}}</td>
+                
+                <input type="hidden" class="form-control" id="FOLIO" name="FOLIO" placeholder="FOLIO", value="{{detalle.0}}">
+
                 <td>{{detalle.1}}</td>
                 <td>{{detalle.2}}</td>
                 <td>{{detalle.3}}</td>
@@ -69,8 +72,8 @@
                     <div class="container justify-content-center">
                         <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="{{count.a}}">
                             <option selected value="NINGUNO">Ninguno</option>
-                            <option value="TOTALES">Parciales</option>
-                            <option value="PARCIALES">Totales</option>
+                            <option value="PARCIALES">Parciales</option>
+                            <option value="TOTALES">Totales</option>
                         </select>
                     </div>
                     

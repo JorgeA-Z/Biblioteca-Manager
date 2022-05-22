@@ -1,6 +1,8 @@
 from __future__ import print_function
 from distutils.log import error
+from doctest import FAIL_FAST
 from logging import warning
+from turtle import Turtle
 from flask import Flask, render_template, request, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -839,42 +841,68 @@ def consulta_prestamo():
 def cobro():
     global m, d
 
+    status = True
+
     cur = mysql.connection.cursor()
 
     if request.method == 'POST':
 
         cont = request.form['EJEMPLARES']
-        print(m)
-        print(m[0])
 
-        #  cur.execute('INSERT INTO COBRO (IDPRESTAMO, ENTREGA, ENTREGAREAL, ESTADO) VALUES(%s, %s, %s, %s)', (m[1], m[2], m[3], 1)
-
+        cur.execute('INSERT INTO COBRO (IDPRESTAMO, ENTREGA, ENTREGAREAL, ESTADO) VALUES(%s, %s, %s, %s)', (m[1], m[2], m[3], 1) )
+        
+        print(m[1], m[2], m[3], 1)
+        
         for i in range(int(cont)):
             id = str(i) 
             lib = request.form[id]
-            print(d[i][1], d[i][2], d[i][3],'Estado: ', lib)
-
+            
             if lib != 'NINGUNO':
 
-                #cur.execute('UPDATE LIBRO SET DAÑOS=%s WHERE IDLIBRO=%s', (lib, d[i][1]))
-                #mysql.connection.commit()
+                cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (0, d[i][1]) )
+                mysql.connection.commit()
 
-                #cur.execute('SELECT LIBRO.COSTO WHERE IDLIBRO=%s', (d[i][1]))
+                status = False
 
-                costo = cur.fetchone()
+                cur.execute('UPDATE LIBRO SET DAÑOS=%s WHERE IDLIBRO=%s', (lib, d[i][1]))
+                mysql.connection.commit()
 
-                pass
+                cur.execute('SELECT LIBRO.COSTO FROM LIBRO WHERE IDLIBRO={0}'.format(d[i][1]))
+
+                data = cur.fetchone()
+                costo = data[0]
+                estado = 1
+
 
             else:
+                
+                cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (1, d[i][1]) )
+                mysql.connection.commit()
+
                 costo = 0
+                estado = 0
 
-          #  cur.execute('INSERT INTO DETALLECOBRO (IDCOBRO, IDLIBRO, DAMAGE, MONTO, ESTADO) VALUES(%s, %s, %s, %s, %s)', (m[0], d[i][1]), lib, costo)
+            cur.execute('INSERT INTO DETALLECOBRO (IDCOBRO, IDLIBRO, DAMAGE, MONTO, ESTADO) VALUES(%s, %s, %s, %s, %s)', (m[0], d[i][1], lib, costo, estado) )
+            print(m[0], d[i][1], lib, costo, estado)
 
+        if status == True:
+            cur.execute('UPDATE COBRO SET ESTADO=%s WHERE IDCOBRO=%s', (0, m[0]))
+            mysql.connection.commit()
 
-            
 
     return redirect(url_for('prestamo_devolucion'))
 
+@app.route('/prestamos/adeudos')
+def adeudos_lista():
+
+    cur = mysql.connection.cursor()
+    sql = 'SELECT * FROM COBRO ORDER BY ESTADO DESC'
+    
+    cur.execute(sql)
+
+    data = cur.fetchall()
+    
+    return render_template('adeudo.html', adeudos = data)
 if __name__ == '__main__':
     app.run()
 
