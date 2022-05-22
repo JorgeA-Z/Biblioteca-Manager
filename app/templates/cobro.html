@@ -1,0 +1,85 @@
+{% extends './prestamos.html' %}
+
+{% block title %}Cobro de prestamo{% endblock %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+
+<form action="{{ url_for('cobro') }}" method="POST" , id="form">
+    
+    <input type="hidden" class="form-control" id="EJEMPLARES" name="EJEMPLARES" placeholder="EJEMPLARES", value="{{ejemplares}}">
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan="6">
+                    <div class="container justify-content-center">
+                        <div class="row">
+                            <div class="col px-2 py-2">
+                                <button type="submit" class="btn  btn-success btn-sm btn-block">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <a href="/prestamos/devolver">
+                        <img src="{{ url_for('static', filename='img/arrow_back_black_24dp.svg') }}" alt="" width="30"
+                            height="24">
+                    </a>
+                </th>
+                <th scope="col">Folio Cobro</th>
+                <th scope="col">Folio Prestamo</th>
+                <th scope="col">Fecha de entrega</th>
+                <th scope="col">Fecha real de entrega</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th></th>
+                <td>{{detalle.0}}</td>
+                <td>{{detalle.1}}</td>
+                <td>{{detalle.2}}</td>
+                <td>{{detalle.3}}</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+            </tr>
+            <tr>
+                <th scope="col">ID Libro</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Daños</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set count = namespace(a=0) %}
+            {% for libro in libros %}
+            <tr>                
+                <td>{{libro.1}}</td>
+                <td>{{libro.2}}</td>
+                <td>{{libro.3}}</td>
+                <td>
+                    <div class="container justify-content-center">
+                        <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="{{count.a}}">
+                            <option selected value="NINGUNO">Ninguno</option>
+                            <option value="TOTALES">Parciales</option>
+                            <option value="PARCIALES">Totales</option>
+                        </select>
+                    </div>
+                    
+                </td>
+                {% set count.a = count.a + 1 %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</form>
+{% endblock %}

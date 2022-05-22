@@ -7,23 +7,23 @@
 <form method="POST" , id="form" onsubmit="detener = false">
     <div class="container m-2 pb-2">
         <div class="row">
-
             <div class="col">
                 <input type="number" class="form-control" id="ID" name="ID" placeholder="ID">
+                <small id="IDsHelpBlock" class="form-text text-muted">
+                    Ingresa el identificador del libro.
+                </small>
             </div>
 
             <div class="col">
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <button type="submit" class="btn btn-success" formaction="/prestamos/nuevo/add">Añadir</button>
-                    <button type="button" class="btn btn-danger">Eliminar</button>
-                    <button type="button" class="btn btn-warning" >Realizar</button>
+                    <button type="submit" class="btn btn-danger" formaction="/prestamos/nuevo/delete">Eliminar</button>
+                    <button type="submit" class="btn btn-warning" formaction="/prestamos/nuevo/do">Realizar</button>
                 </div>
                 <small id="OpcionesHelpBlock" class="form-text text-muted">
                     Opciones del prestamo.
                 </small>
-            </div>
-                
-            
+            </div>            
         </div>
     </div>
 </form>
@@ -70,7 +70,7 @@
     </thead>
     <tbody>
         <tr>
-            <th>En eso estoy</th>
+            <th>{{miembro.4}}</th>
             <th>{{miembro.0}}</th>
             <th>{{miembro.1}}</th>
             <th>{{miembro.2}}</th>

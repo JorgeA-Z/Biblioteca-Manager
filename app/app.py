@@ -1,3 +1,4 @@
+from __future__ import print_function
 from distutils.log import error
 from logging import warning
 from flask import Flask, render_template, request, redirect, url_for, flash, request, session
@@ -15,6 +16,9 @@ mysql = MySQL(app)
 
 p = []
 l = []
+
+m = []
+d = []
 @app.before_request
 def antes_de_cada_peticion():
     ruta = request.path
@@ -340,6 +344,30 @@ def edited_empleado():
     
     return redirect(url_for('empleados_lista'))
 
+@app.route('/empleados/lista/consulta', methods=['POST'])
+def consulta_empleado():
+    if request.method == 'POST':
+
+        a = request.form['RFC']
+        if a == '':
+            return redirect(url_for('empleados_lista'))
+
+        try:
+            cur = mysql.connection.cursor()
+
+            sql = 'SELECT * FROM EMPLEADO WHERE RFC=%s'
+        
+            cur.execute(sql, (a, ))
+        
+            #data = cur.fetchone()
+            data = cur.fetchall()
+        except Exception as e:
+            print(e)
+            return redirect(url_for('empleados_lista'))
+    
+    return render_template('empleados_lista.html', empleados = data)
+        
+
 @app.route('/membresia')
 def membresia():
     return render_template('membresia.html')
@@ -618,6 +646,16 @@ def prestamos_loged():
 
 
     cur = mysql.connection.cursor()
+    
+    cur.execute('SELECT * FROM PRESTAMO WHERE IDPRESTAMO=(SELECT MAX(IDPRESTAMO) FROM PRESTAMO)')
+
+    folio = cur.fetchone()
+
+    print(folio)
+    if folio == None:
+        folio = (int(0 + 1),)
+    else:
+        folio = (int(folio[0] + 1), )
 
     sql = 'SELECT MEMBRESIA.IDMEMBRESIA, USUARIO.NOMBRE FROM MEMBRESIA, USUARIO WHERE MEMBRESIA.IDMEMBRESIA =%s AND MEMBRESIA.IDUSUARIO=USUARIO.IDUSUARIO'
         
@@ -627,8 +665,8 @@ def prestamos_loged():
     p.append(data[1])
     p.append(hoy)
     p.append(entrega)
+    p.append(folio[0])
 
-    print(p)
 
     return redirect(url_for('prestamos_nuevo'))
 
@@ -667,10 +705,175 @@ def prestamo_add():
 
 
         except Exception as e:
-            return render_template('prestamos_nuevo.html', error = e, miembro = p, libros = l)
+            return render_template('prestamos_nuevo.html', error = '', miembro = p, libros = l)
             
 
     return render_template('prestamos_nuevo.html', success = str(data[2]) + ' | ' + str(data[0]) + ' | ' +str(data[1]) + ' | ' + str(data[3]) + ' | ', miembro = p, libros = l)
+
+@app.route('/prestamos/nuevo/delete', methods=['POST'])
+def prestamo_delete():
+    global p, l
+
+    if request.method == 'POST':
+        a = request.form['ID']
+        for libro in l:
+            if int(a) == int(libro[2]):
+                data = libro
+                l.remove(libro)
+                return render_template('prestamos_nuevo.html',success = str(data[2]) + ' | ' + str(data[0]) + ' | ' +str(data[1]) + ' | ' + str(data[3]) + ' | des', miembro = p, libros = l)
+                
+
+    return render_template('prestamos_nuevo.html',error = 'Este libro no existe' , miembro = p, libros = l)
+
+@app.route('/prestamos/nuevo/do', methods=['POST'])
+def prestamo_do():
+    global p, l
+
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+
+        if len(l) >= 1:
+
+            cur.execute('INSERT INTO PRESTAMO (IDMEMBRESIA, SOLICITUD, ENTREGA) VALUES(%s, %s, %s)', (p[0], p[2], p[3]))
+            mysql.connection.commit()
+
+            for libro in l:
+                cur.execute('INSERT INTO DETALLEPRESTAMO (IDPRESTAMO, IDLIBRO) VALUES(%s, %s)', (p[4], libro[2]))
+                mysql.connection.commit()
+                cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (0, libro[2]))
+                mysql.connection.commit()
+
+        else:
+            return render_template('prestamos_nuevo.html',error = 'Cajon vacío' , miembro = p, libros = l)
+
+    
+        return redirect(url_for('prestamos'))
+
+@app.route('/prestamos/devolver')
+def prestamo_devolucion():
+    global m, d
+    m.clear()
+    d.clear()
+
+    cur = mysql.connection.cursor()
+    sql = 'SELECT * FROM PRESTAMO WHERE IDPRESTAMO NOT IN(SELECT IDPRESTAMO FROM COBRO)'
+    cur.execute(sql)
+    data = cur.fetchall()
+    
+    return render_template('devolucion.html', prestamos = data)
+
+@app.route('/prestamos/devolver/detalle<FOLIO>')
+def prestamo_detalle(FOLIO):
+    cur = mysql.connection.cursor()
+
+    cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO={0} AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(FOLIO))
+
+    data = cur.fetchall()
+    
+    return render_template('detalle.html', libros = data)
+
+@app.route('/prestamos/devolver/devolucion<FOLIO>')
+def prestamo_devolver(FOLIO):
+    global m, d
+
+    cur = mysql.connection.cursor()
+
+    cur.execute('SELECT * FROM COBRO WHERE IDCOBRO=(SELECT MAX(IDCOBRO) FROM COBRO)')
+    
+    idcobro = cur.fetchone()
+    
+    if idcobro == None:
+        idcobro = (0 + 1,)
+    else:
+        idcobro = (idcobro[0] + 1,)
+    
+    m.append(idcobro[0])
+
+
+    cur.execute('SELECT PRESTAMO.IDPRESTAMO, PRESTAMO.ENTREGA FROM PRESTAMO WHERE PRESTAMO.IDPRESTAMO={0}'.format(FOLIO))
+    
+    data = cur.fetchone()
+
+    m.append(data[0])
+    m.append(data[1])
+
+    fecha = datetime.today()
+    hoy = str(fecha.strftime('%Y-%m-%d'))
+    m.append(hoy)
+
+
+    cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO={0} AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(FOLIO))
+    
+    data = cur.fetchall()
+    for i in data:
+        d.append(i)
+    
+    cantidad = len(data)
+
+
+
+    return render_template('cobro.html', detalle = m, libros = data, ejemplares = cantidad)
+
+@app.route('/prestamos/devolver/consulta', methods=['POST'])
+def consulta_prestamo():
+    if request.method == 'POST':
+
+        a = request.form['FOLIO']
+
+        try:
+            cur = mysql.connection.cursor()
+
+            sql = 'SELECT * FROM PRESTAMO where IDPRESTAMO={0}'.format(a)
+        
+            cur.execute(sql)
+        
+            #data = cur.fetchone()
+            data = cur.fetchall()
+        except Exception as e:
+            return redirect(url_for('prestamo_devolucion'))
+        
+    return render_template('devolucion.html', prestamos = data)
+
+
+@app.route('/prestamos/devolver/cobrar?', methods=['POST'])
+def cobro():
+    global m, d
+
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+
+        cont = request.form['EJEMPLARES']
+        print(m)
+        print(m[0])
+
+        #  cur.execute('INSERT INTO COBRO (IDPRESTAMO, ENTREGA, ENTREGAREAL, ESTADO) VALUES(%s, %s, %s, %s)', (m[1], m[2], m[3], 1)
+
+        for i in range(int(cont)):
+            id = str(i) 
+            lib = request.form[id]
+            print(d[i][1], d[i][2], d[i][3],'Estado: ', lib)
+
+            if lib != 'NINGUNO':
+
+                #cur.execute('UPDATE LIBRO SET DAÑOS=%s WHERE IDLIBRO=%s', (lib, d[i][1]))
+                #mysql.connection.commit()
+
+                #cur.execute('SELECT LIBRO.COSTO WHERE IDLIBRO=%s', (d[i][1]))
+
+                costo = cur.fetchone()
+
+                pass
+
+            else:
+                costo = 0
+
+          #  cur.execute('INSERT INTO DETALLECOBRO (IDCOBRO, IDLIBRO, DAMAGE, MONTO, ESTADO) VALUES(%s, %s, %s, %s, %s)', (m[0], d[i][1]), lib, costo)
+
+
+            
+
+    return redirect(url_for('prestamo_devolucion'))
 
 if __name__ == '__main__':
     app.run()

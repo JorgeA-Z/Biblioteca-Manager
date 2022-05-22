@@ -2,7 +2,7 @@
 {% block title %}Empleados lista{% endblock %}
 
 {% block body %}
-<form action="" method="POST", id="form">
+<form action="{{url_for('consulta_empleado')}}" method="POST", id="form">
   <div class="container m-2 pb-2">
     <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
       <div class="col-6">
