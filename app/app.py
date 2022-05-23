@@ -59,6 +59,10 @@ def login_user():
 
         try:
             data = cur.fetchone()
+            print(data[8])
+            if  data[8] == 0:
+                return redirect(url_for('login_error'))
+
             if data[0] != a and data[1] != b:
         
                 return redirect(url_for('login_error'))
@@ -819,6 +823,9 @@ def prestamo_devolver(FOLIO):
     cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO={0} AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(FOLIO))
     
     data = cur.fetchall()
+
+    print(data)
+
     for i in data:
         d.append(i)
     
@@ -869,12 +876,12 @@ def cobro():
             id = str(i) 
             lib = request.form[id]
             
-            if lib != 'NINGUNO':
+            if lib == 'PARCIALES': 
+                status = False
 
                 cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (0, d[i][1]) )
                 mysql.connection.commit()
 
-                status = False
 
                 cur.execute('UPDATE LIBRO SET DAÑOS=%s WHERE IDLIBRO=%s', (lib, d[i][1]))
                 mysql.connection.commit()
@@ -885,6 +892,21 @@ def cobro():
                 costo = data[0]
                 estado = 1
 
+            elif lib == 'TOTALES':
+                status = False
+
+                cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (0, d[i][1]) )
+                mysql.connection.commit()
+
+
+                cur.execute('UPDATE LIBRO SET DAÑOS=%s WHERE IDLIBRO=%s', (lib, d[i][1]))
+                mysql.connection.commit()
+
+                cur.execute('SELECT LIBRO.COSTO FROM LIBRO WHERE IDLIBRO={0}'.format(d[i][1]))
+
+                data = cur.fetchone()
+                costo = data[0]
+                estado = 1
 
             else:
                 
@@ -896,6 +918,7 @@ def cobro():
 
             cur.execute('INSERT INTO DETALLECOBRO (IDCOBRO, IDLIBRO, DAMAGE, MONTO, ESTADO) VALUES(%s, %s, %s, %s, %s)', (m[0], d[i][1], lib, costo, estado) )
             print(m[0], d[i][1], lib, costo, estado)
+            mysql.connection.commit()
 
         if status == True:
             cur.execute('UPDATE COBRO SET ESTADO=%s WHERE IDCOBRO=%s', (0, m[0]))
@@ -945,8 +968,8 @@ def adeudo_detalle(FOLIO):
     FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO 
     
     WHERE COBRO.IDCOBRO={0}
-    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
     AND DETALLECOBRO.IDCOBRO = COBRO.IDCOBRO
+    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
     AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO 
     AND TITULO.IDTITULO = LIBRO.IDTITULO 
     
@@ -955,6 +978,9 @@ def adeudo_detalle(FOLIO):
     cur.execute(sql)
 
     data = cur.fetchall()
+    
+    print(data)
+
     monto = 0
     for libro in data:
         monto = monto +  libro[4]
@@ -989,6 +1015,7 @@ def adeudo_do(FOLIO):
     cur.execute(sql)
 
     data = cur.fetchall()
+    print(data)
     monto = 0
     for libro in data:
         monto = monto +  libro[4]
@@ -1016,6 +1043,37 @@ def adeudo_resolve(FOLIO):
     mysql.connection.commit()
 
     return redirect(url_for('adeudos_lista'))
+
+@app.route('/registrar/visita' , methods=['POST'])
+def Registrar_Visitas():
+    
+    if request.method == 'POST':
+        a = request.form['ID']
+        b = request.form['CONTRASEÑA']
+    
+        cur = mysql.connection.cursor()
+
+        sql = 'SELECT * FROM USUARIO where IDUSUARIO=%s and CONTRASEÑA=%s'
+        
+        cur.execute(sql, (a, b))
+
+        try:
+            data = cur.fetchone()
+            print(data[4])
+            if  data[4] == 0:
+                return render_template('registro_de_visitas.html', error = 'ds')      
+
+            if data[0] != a and data[2] != b:        
+                return render_template('registro_de_visitas.html', error = 'sd')      
+
+        except Exception as e:            
+            return render_template('registro_de_visitas.html', error = 'sd')      
+        
+        cur.execute('INSERT INTO VISITAS(IDUSUARIO) VALUES(%s)', (a, ) )
+        
+        mysql.connection.commit()
+        
+        return render_template('registro_de_visitas.html', success = 'ds')      
 
 if __name__ == '__main__':
     app.run()

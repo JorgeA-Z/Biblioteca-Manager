@@ -15,19 +15,39 @@
     <div class="row d-flex justify-content-center">
         <div class="col-md-6">
             <div class="card px-5 py-5" id="form1">
-              <form>
+              <form  action="{{url_for('Registrar_Visitas')}}" method="POST" , id="form">
+                {% if success %}
+                <div class="row px-2">
+                    <div class="col">
+                        <div class="alert alert-success" role="alert">
+                            Visita Registrada
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <div class="row px-2">
+                    <div class="col">
+                        <div class="alert alert-danger" role="alert">
+                            Credenciales invalidas
+                        </div>
+                    </div>
+                </div>
+
+              {% endif %}
+
                 <div class="form-group px-2">
-                    <label for="ISBN">Nombre</label>
-                    <input type="text" class="form-control" id="ISBN" name="ISBN">
+                    <label for="USUARIO">ID Usuario</label>
+                    <input type="text" class="form-control" id="ID" name="ID">
                 </div>
                 <div class="form-group px-2">
-                    <label for="Nombre">Télefono</label>
-                    <input type="text" class="form-control" id="Nombre" name="Nombre">
+                    <label for="CONTRASEÑA">Contraseña</label>
+                    <input type="password" class="form-control" id="CONTRASEÑA" name="CONTRASEÑA">
                 </div>
                 
                 <button type="submit" class="btn btn-dark w-100">Registrar visita</button>
               </form>
-
             </div>
         </div>
     </div>
