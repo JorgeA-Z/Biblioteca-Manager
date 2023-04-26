@@ -1,17 +1,12 @@
-from __future__ import print_function
-from distutils.log import error
-from doctest import FAIL_FAST
-from logging import warning
-from turtle import Turtle
 from flask import Flask, render_template, request, redirect, url_for, flash, request, session
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'biblioteca'
+app.config['MYSQL_HOST'] = 'Crachsman.mysql.pythonanywhere-services.com'
+app.config['MYSQL_USER'] = 'Crachsman'
+app.config['MYSQL_PASSWORD'] = 'BiblioManager231'
+app.config['MYSQL_DB'] = 'Crachsman$default'
 app.secret_key = 'BAD_SECRET_KEY'
 
 mysql = MySQL(app)
@@ -53,8 +48,8 @@ def login_user():
 
         cur = mysql.connection.cursor()
 
-        sql = 'SELECT * FROM EMPLEADO where RFC=%s and CONTRASEÑA=%s'
-        
+        sql = 'SELECT * FROM empleado where RFC=%s and CONTRASEÑA=%s'
+
         cur.execute(sql, (a, b))
 
         try:
@@ -64,15 +59,15 @@ def login_user():
                 return redirect(url_for('login_error'))
 
             if data[0] != a and data[1] != b:
-        
+
                 return redirect(url_for('login_error'))
 
         except Exception as e:
             return redirect(url_for('login_error'))
-        
+
         #return render_template('login.html', error="Credenciales invalidas")
         session["usuario"] = a
-        
+
         return redirect(url_for('index'))
 
 @app.route('/menu')
@@ -98,7 +93,7 @@ def titulos_altas():
 @app.route('/libros/titulos/lista')
 def titulos_lista():
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM TITULO')
+    cur.execute('SELECT * FROM titulo')
     data = cur.fetchall()
     return render_template('titulo_lista.html', titulos = data)
 
@@ -106,7 +101,7 @@ def titulos_lista():
 def edit_titulo(id):
 
     cur = mysql.connection.cursor()
-        
+
     cur.execute('SELECT * FROM TITULO WHERE IDTITULO={0}'.format(id))
 
     data = cur.fetchone()
@@ -124,7 +119,7 @@ def edited_titulo():
         d = request.form['EDICION']
         e = request.form['SCDD']
         f = request.form['EDITORIAL']
-        
+
         cur = mysql.connection.cursor()
         cur.execute('UPDATE TITULO SET IDTITULO=%s, NOMBRE=%s, AUTOR=%s, EDICION=%s, SCDD=%s, EDITORIAL=%s WHERE IDTITULO =%s', (a, b, c, d, e, f, a2))
         mysql.connection.commit()
@@ -140,15 +135,15 @@ def consulta_titulo():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM TITULO where IDTITULO={0}'.format(a)
-        
+
             cur.execute(sql)
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
-            
+
         except Exception as e:
             return redirect(url_for('titulos_lista'))
-        
+
     return render_template('titulo_lista.html', titulos = data)
 
 
@@ -165,7 +160,7 @@ def add_titulo():
             cur = mysql.connection.cursor()
             cur.execute('INSERT INTO TITULO (IDTITULO, NOMBRE, AUTOR, EDICION, SCDD, EDITORIAL) VALUES(%s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f))
             mysql.connection.commit()
-        
+
         except Exception as e:
             return render_template('titulo_altas.html', error = e)
 
@@ -176,13 +171,13 @@ def add_titulo():
 def add_libro(id):
 
     cur = mysql.connection.cursor()
-        
+
     cur.execute('SELECT * FROM TITULO WHERE IDTITULO={0}'.format(id))
 
     data = cur.fetchone()
-    
+
     cur.execute('SELECT * FROM LIBRO WHERE IDLIBRO=(SELECT MAX(IDLIBRO) FROM LIBRO)')
-    
+
     data2 = cur.fetchone()
 
     cur.execute('SELECT count(*) FROM LIBRO WHERE IDTITULO={0}'.format(id))
@@ -205,7 +200,7 @@ def edited_libro():
         cur = mysql.connection.cursor()
         cur.execute('UPDATE LIBRO SET COSTO=%s, DAÑOS=%s, ESTADO=%s WHERE IDLIBRO =%s', (b, c, d, a))
         mysql.connection.commit()
-    
+
     return redirect(url_for('libros_lista'))
 
 @app.route('/libros/lista/nuevo', methods=['POST'])
@@ -218,17 +213,17 @@ def add_libro_nuevo():
         e = request.form['Estado']
 
         b = int(b)+1
-        
-        
+
+
         try:
             cur = mysql.connection.cursor()
             cur.execute('INSERT INTO LIBRO (IDTITULO, EJEMPLAR, COSTO, DAÑOS, ESTADO) VALUES(%s, %s, %s, %s, %s)', (a, b, c, d, e))
             mysql.connection.commit()
-        
+
         except Exception as e:
             return render_template('libros_altas.html', error = e)
 
-    
+
     return redirect(url_for('titulos_lista'))
 
 @app.route('/libros/lista')
@@ -241,7 +236,7 @@ def libros_lista():
 @app.route('/libros/lista/edit/<id>')
 def edit_libro(id):
     cur = mysql.connection.cursor()
-        
+
     cur.execute('SELECT * FROM LIBRO WHERE IDLIBRO={0}'.format(id))
 
     data = cur.fetchone()
@@ -258,15 +253,15 @@ def consulta_libro():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM LIBRO where IDLIBRO={0}'.format(a)
-        
+
             cur.execute(sql)
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
-            
+
         except Exception as e:
             return redirect(url_for('libros_lista'))
-        
+
     return render_template('libros_lista.html', libros = data)
 
 
@@ -298,7 +293,7 @@ def add_empleados():
             cur = mysql.connection.cursor()
             cur.execute('INSERT INTO EMPLEADO (RFC, CONTRASEÑA, NOMBRE, TELEFONO, SALARIO, CARGO, DOMICILIO, CORREO) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)', (a, b, c, d, e, f, g, h))
             mysql.connection.commit()
-        
+
         except Exception as e:
             return render_template('empleados_altas.html', error = e)
 
@@ -340,14 +335,14 @@ def edited_empleado():
 
         try:
             cur = mysql.connection.cursor()
-            
+
             cur.execute('UPDATE EMPLEADO SET RFC=%s, CONTRASEÑA=%s, NOMBRE=%s, TELEFONO=%s, SALARIO=%s, CARGO=%s, DOMICILIO=%s, CORREO=%s, ESTADO=%s WHERE RFC=%s', (a2, b, c, d, e, f, g, h, i, a))
-            
+
             mysql.connection.commit()
-        
+
         except Exception as e:
             return render_template('empleados.html', error = e)
-    
+
     return redirect(url_for('empleados_lista'))
 
 @app.route('/empleados/lista/consulta', methods=['POST'])
@@ -362,17 +357,17 @@ def consulta_empleado():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM EMPLEADO WHERE RFC=%s'
-        
+
             cur.execute(sql, (a, ))
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
         except Exception as e:
             print(e)
             return redirect(url_for('empleados_lista'))
-    
+
     return render_template('empleados_lista.html', empleados = data)
-        
+
 
 @app.route('/membresia')
 def membresia():
@@ -381,9 +376,9 @@ def membresia():
 @app.route('/membresia/altas/<idusuario>')
 def membresia_altas(idusuario):
     cur = mysql.connection.cursor()
-    
+
     cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA=(SELECT MAX(IDMEMBRESIA) FROM MEMBRESIA)')
-    
+
     data = cur.fetchone()
 
     if data == None:
@@ -407,10 +402,10 @@ def add_miembro():
         d = request.form['CORREO']
         e = request.form['NACIMIENTO']
         f = request.form['ESTADO']
-        
+
         cur = mysql.connection.cursor()
 
-        
+
         try:
 
             sql = 'SELECT * FROM MEMBRESIA where IDUSUARIO={0}'.format(b)
@@ -429,7 +424,7 @@ def add_miembro():
 
             return render_template('membresia_altas.html', id = data, error = 'Error: No existe el usuario')
 
-            
+
         try:
             fecha = datetime.today()
             td = timedelta(days = 730)
@@ -452,7 +447,7 @@ def add_miembro():
 @app.route('/membresia/lista/edit/<id>')
 def edit_member(id):
     cur = mysql.connection.cursor()
-        
+
     cur.execute('SELECT * FROM MEMBRESIA WHERE IDMEMBRESIA={0}'.format(id))
 
     data = cur.fetchone()
@@ -472,14 +467,14 @@ def edited_membresia():
         cur = mysql.connection.cursor()
         if(f == '0'):
             cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s, ESTADO=%s WHERE IDMEMBRESIA =%s', (c, d, e, f, a))
-        
+
         elif(f == '2'):
             f = '1'
             fecha = datetime.today()
             td = timedelta(days = 730)
             fecha = fecha + td
             g = str(fecha.strftime('%Y-%m-%d'))
-            
+
             cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s, ESTADO=%s, EXPIRACION=%s WHERE IDMEMBRESIA =%s', (c, d, e, f, g, a))
         else:
             #cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s WHERE IDMEMBRESIA =%s', (b, c, d, a))
@@ -487,15 +482,15 @@ def edited_membresia():
             cur.execute('UPDATE MEMBRESIA SET DOMICILIO=%s, CORREO=%s, NACIMIENTO=%s WHERE IDMEMBRESIA =%s', (c, d, e, a))
 
         mysql.connection.commit()
-    
+
     return redirect(url_for('membresia_lista'))
 
 @app.route('/membresia/altas/usuarios')
 def usuarios_altas():
     cur = mysql.connection.cursor()
-    
+
     cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO=(SELECT MAX(IDUSUARIO) FROM USUARIO)')
-    
+
     data = cur.fetchone()
 
     if data == None:
@@ -519,19 +514,19 @@ def add_usuario():
         d = request.form['TIPO']
         e = request.form['ESTADO']
         f = request.form['TELEFONO']
-        
+
         try:
             cur = mysql.connection.cursor()
             cur.execute('INSERT INTO USUARIO (NOMBRE, CONTRASEÑA, TIPO, TELEFONO) VALUES(%s, %s, %s, %s)', (b, c, d, f))
             mysql.connection.commit()
-        
+
         except Exception as e:
             cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO=(SELECT MAX(IDUSUARIO) FROM USUARIO)')
-    
+
             data = cur.fetchone()
             if data == None:
                 data = (0,)
-            
+
             return render_template('usuario_altas.html', error = e, id = data)
 
 
@@ -541,13 +536,13 @@ def add_usuario():
 def edit_usuario(id):
 
     cur = mysql.connection.cursor()
-        
+
     cur.execute('SELECT * FROM USUARIO WHERE IDUSUARIO={0}'.format(id))
 
     data = cur.fetchone()
 
     print(data)
-    
+
     return render_template('usuario_altas_edit.html', usuario = data)
 
 
@@ -560,7 +555,7 @@ def edited_usuario():
         d = request.form['ESTADO']
         e = request.form['CONTRASEÑA']
         f = request.form['TIPO']
-        
+
         cur = mysql.connection.cursor()
         cur.execute('UPDATE USUARIO SET NOMBRE=%s, TELEFONO=%s, ESTADO=%s, CONTRASEÑA=%s, TIPO=%s WHERE IDUSUARIO =%s', (b, c, d, e, f, a))
         mysql.connection.commit()
@@ -577,14 +572,14 @@ def consulta_miembro():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA={0}'.format(a)
-        
+
             cur.execute(sql)
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
         except Exception as e:
             return redirect(url_for('membresia_lista'))
-        
+
     return render_template('membresia_lista.html', miembros = data)
 
 @app.route('/membresia/lista/usuarios/consulta', methods=['POST'])
@@ -597,14 +592,14 @@ def consulta_usuario():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM USUARIO where IDUSUARIO={0}'.format(a)
-        
+
             cur.execute(sql)
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
         except Exception as e:
             return redirect(url_for('usuarios_lista'))
-        
+
     return render_template('usuarios_lista.html', usuarios = data)
 
 @app.route('/prestamos')
@@ -625,19 +620,19 @@ def prestamos_loged():
         cur = mysql.connection.cursor()
 
         sql = 'SELECT * FROM MEMBRESIA where IDMEMBRESIA={0}'.format(a)
-        
+
 
         try:
             cur.execute(sql)
-            
+
             data = cur.fetchone()
             if data == None:
                 return render_template('prestamos_login.html', error = 'No se encontro al usuario')
 
         except Exception as e:
                 return render_template('prestamos_login.html', error = e)
-        
-        
+
+
     #return render_template('prestamos_nuevo.html', miembro = data)
 
     p.clear()
@@ -648,11 +643,11 @@ def prestamos_loged():
     hoy = str(fecha.strftime('%Y-%m-%d'))
     entrega = fecha + td
     entrega = str(entrega.strftime('%Y-%m-%d'))
-    
+
 
 
     cur = mysql.connection.cursor()
-    
+
     cur.execute('SELECT * FROM PRESTAMO WHERE IDPRESTAMO=(SELECT MAX(IDPRESTAMO) FROM PRESTAMO)')
 
     folio = cur.fetchone()
@@ -664,9 +659,9 @@ def prestamos_loged():
         folio = (int(folio[0] + 1), )
 
     sql = 'SELECT MEMBRESIA.IDMEMBRESIA, USUARIO.NOMBRE FROM MEMBRESIA, USUARIO WHERE MEMBRESIA.IDMEMBRESIA =%s AND MEMBRESIA.IDUSUARIO=USUARIO.IDUSUARIO'
-        
+
     cur.execute(sql, (a))
-    data = cur.fetchone() 
+    data = cur.fetchone()
     p.append(data[0])
     p.append(data[1])
     p.append(hoy)
@@ -686,10 +681,10 @@ def prestamo_add():
     global p, l
     if request.method == 'POST':
         a = request.form['ID']
-        
+
         if len(a) < 1:
             return render_template('prestamos_nuevo.html',error = 'Este libro no existe' , miembro = p, libros = l)
-        
+
         cur = mysql.connection.cursor()
 
         sql = 'SELECT * FROM LIBRO where IDLIBRO={0}'.format(a)
@@ -715,7 +710,7 @@ def prestamo_add():
 
         except Exception as e:
             return render_template('prestamos_nuevo.html', error = '', miembro = p, libros = l)
-            
+
 
     return render_template('prestamos_nuevo.html', success = str(data[2]) + ' | ' + str(data[0]) + ' | ' +str(data[1]) + ' | ' + str(data[3]) + ' | ', miembro = p, libros = l)
 
@@ -733,7 +728,7 @@ def prestamo_delete():
                 data = libro
                 l.remove(libro)
                 return render_template('prestamos_nuevo.html',success = str(data[2]) + ' | ' + str(data[0]) + ' | ' +str(data[1]) + ' | ' + str(data[3]) + ' | des', miembro = p, libros = l)
-                
+
 
     return render_template('prestamos_nuevo.html',error = 'Este libro no existe' , miembro = p, libros = l)
 
@@ -758,14 +753,14 @@ def prestamo_do():
         else:
             return render_template('prestamos_nuevo.html',error = 'Cajon vacío' , miembro = p, libros = l)
 
-        
+
         cur = mysql.connection.cursor()
 
         cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO=(SELECT MAX(IDPRESTAMO) FROM PRESTAMO) AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO')
 
         data = cur.fetchall()
 
-        return render_template('detalle.html', libros = data, status = 'Solicitud realizada correctamente', miembros = p)    
+        return render_template('detalle.html', libros = data, status = 'Solicitud realizada correctamente', miembros = p)
 
 @app.route('/prestamos/devolver')
 def prestamo_devolucion():
@@ -777,7 +772,7 @@ def prestamo_devolucion():
     sql = 'SELECT * FROM PRESTAMO WHERE IDPRESTAMO NOT IN(SELECT IDPRESTAMO FROM COBRO)'
     cur.execute(sql)
     data = cur.fetchall()
-    
+
     return render_template('devolucion.html', prestamos = data)
 
 @app.route('/prestamos/devolver/detalle<FOLIO>')
@@ -787,7 +782,7 @@ def prestamo_detalle(FOLIO):
     cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO={0} AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(FOLIO))
 
     data = cur.fetchall()
-    
+
     return render_template('detalle.html', libros = data)
 
 @app.route('/prestamos/devolver/devolucion<FOLIO>')
@@ -797,19 +792,19 @@ def prestamo_devolver(FOLIO):
     cur = mysql.connection.cursor()
 
     cur.execute('SELECT * FROM COBRO WHERE IDCOBRO=(SELECT MAX(IDCOBRO) FROM COBRO)')
-    
+
     idcobro = cur.fetchone()
-    
+
     if idcobro == None:
         idcobro = (0 + 1,)
     else:
         idcobro = (idcobro[0] + 1,)
-    
+
     m.append(idcobro[0])
 
 
     cur.execute('SELECT PRESTAMO.IDPRESTAMO, PRESTAMO.ENTREGA FROM PRESTAMO WHERE PRESTAMO.IDPRESTAMO={0}'.format(FOLIO))
-    
+
     data = cur.fetchone()
 
     m.append(data[0])
@@ -821,14 +816,14 @@ def prestamo_devolver(FOLIO):
 
 
     cur.execute('SELECT DETALLEPRESTAMO.IDPRESTAMO, DETALLEPRESTAMO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR FROM DETALLEPRESTAMO, LIBRO, TITULO WHERE DETALLEPRESTAMO.IDPRESTAMO={0} AND LIBRO.IDLIBRO=DETALLEPRESTAMO.IDLIBRO AND TITULO.IDTITULO=LIBRO.IDTITULO'.format(FOLIO))
-    
+
     data = cur.fetchall()
 
     print(data)
 
     for i in data:
         d.append(i)
-    
+
     cantidad = len(data)
 
 
@@ -845,14 +840,14 @@ def consulta_prestamo():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM PRESTAMO where IDPRESTAMO={0} AND IDPRESTAMO NOT IN(SELECT IDPRESTAMO FROM COBRO)'.format(a)
-        
+
             cur.execute(sql)
-        
+
             #data = cur.fetchone()
             data = cur.fetchall()
         except Exception as e:
             return redirect(url_for('prestamo_devolucion'))
-        
+
     return render_template('devolucion.html', prestamos = data)
 
 
@@ -869,14 +864,14 @@ def cobro():
         cont = request.form['EJEMPLARES']
 
         cur.execute('INSERT INTO COBRO (IDPRESTAMO, ENTREGA, ENTREGAREAL, ESTADO) VALUES(%s, %s, %s, %s)', (m[1], m[2], m[3], 1) )
-        
+
         print(m[1], m[2], m[3], 1)
-        
+
         for i in range(int(cont)):
-            id = str(i) 
+            id = str(i)
             lib = request.form[id]
-            
-            if lib == 'PARCIALES': 
+
+            if lib == 'PARCIALES':
                 status = False
 
                 cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (0, d[i][1]) )
@@ -909,7 +904,7 @@ def cobro():
                 estado = 1
 
             else:
-                
+
                 cur.execute('UPDATE LIBRO SET ESTADO=%s WHERE IDLIBRO=%s', (1, d[i][1]) )
                 mysql.connection.commit()
 
@@ -932,11 +927,11 @@ def adeudos_lista():
 
     cur = mysql.connection.cursor()
     sql = 'SELECT * FROM COBRO ORDER BY ESTADO DESC'
-    
+
     cur.execute(sql)
 
     data = cur.fetchall()
-    
+
     return render_template('adeudo.html', adeudos = data)
 
 @app.route('/prestamos/adeudos/consulta', methods=['POST'])
@@ -948,11 +943,11 @@ def consulta_adeudo():
             cur = mysql.connection.cursor()
 
             sql = 'SELECT * FROM COBRO where IDCOBRO={0}'.format(a)
-        
+
             cur.execute(sql)
-        
+
             data = cur.fetchall()
-            
+
         except Exception as e:
             return redirect(url_for('adeudos_lista'))
 
@@ -964,21 +959,21 @@ def adeudo_detalle(FOLIO):
     cur = mysql.connection.cursor()
 
     sql = '''
-    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE 
-    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO 
-    
+    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE
+    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO
+
     WHERE COBRO.IDCOBRO={0}
     AND DETALLECOBRO.IDCOBRO = COBRO.IDCOBRO
-    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
-    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO 
-    AND TITULO.IDTITULO = LIBRO.IDTITULO 
-    
+    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO
+    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO
+    AND TITULO.IDTITULO = LIBRO.IDTITULO
+
     '''.format(FOLIO)
 
     cur.execute(sql)
 
     data = cur.fetchall()
-    
+
     print(data)
 
     monto = 0
@@ -994,22 +989,22 @@ def adeudo_detalle(FOLIO):
 
     info = cur.fetchone()
 
-    return render_template('detalle_cobro.html', libros = data, monto = monto, fechas= info)      
+    return render_template('detalle_cobro.html', libros = data, monto = monto, fechas= info)
 
 @app.route('/prestamos/adeudos/do<FOLIO>')
 def adeudo_do(FOLIO):
     cur = mysql.connection.cursor()
 
     sql = '''
-    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE 
-    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO 
-    
+    SELECT COBRO.IDPRESTAMO, DETALLECOBRO.IDLIBRO, TITULO.NOMBRE, TITULO.AUTOR, DETALLECOBRO.MONTO, DETALLECOBRO.DAMAGE
+    FROM DETALLECOBRO, LIBRO, TITULO, COBRO, PRESTAMO
+
     WHERE COBRO.IDCOBRO={0}
-    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO 
+    AND COBRO.IDPRESTAMO = PRESTAMO.IDPRESTAMO
     AND DETALLECOBRO.IDCOBRO = COBRO.IDCOBRO
-    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO 
-    AND TITULO.IDTITULO = LIBRO.IDTITULO 
-    
+    AND LIBRO.IDLIBRO = DETALLECOBRO.IDLIBRO
+    AND TITULO.IDTITULO = LIBRO.IDTITULO
+
     '''.format(FOLIO)
 
     cur.execute(sql)
@@ -1029,12 +1024,12 @@ def adeudo_do(FOLIO):
 
     info = cur.fetchone()
 
-    return render_template('realizar_cobro.html', libros = data, monto = monto, fechas= info)    
+    return render_template('realizar_cobro.html', libros = data, monto = monto, fechas= info)
 @app.route('/prestamos/adeudos/resolve<FOLIO>')
 def adeudo_resolve(FOLIO):
     print(FOLIO)
     cur = mysql.connection.cursor()
-    
+
     cur.execute('UPDATE COBRO SET ESTADO=%s WHERE IDCOBRO=%s', (0, FOLIO))
 
     mysql.connection.commit()
@@ -1046,34 +1041,34 @@ def adeudo_resolve(FOLIO):
 
 @app.route('/registrar/visita' , methods=['POST'])
 def Registrar_Visitas():
-    
+
     if request.method == 'POST':
         a = request.form['ID']
         b = request.form['CONTRASEÑA']
-    
+
         cur = mysql.connection.cursor()
 
         sql = 'SELECT * FROM USUARIO where IDUSUARIO=%s and CONTRASEÑA=%s'
-        
+
         cur.execute(sql, (a, b))
 
         try:
             data = cur.fetchone()
             print(data[4])
             if  data[4] == 0:
-                return render_template('registro_de_visitas.html', error = 'ds')      
+                return render_template('registro_de_visitas.html', error = 'ds')
 
-            if data[0] != a and data[2] != b:        
-                return render_template('registro_de_visitas.html', error = 'sd')      
+            if data[0] != a and data[2] != b:
+                return render_template('registro_de_visitas.html', error = 'sd')
 
-        except Exception as e:            
-            return render_template('registro_de_visitas.html', error = 'sd')      
-        
+        except Exception as e:
+            return render_template('registro_de_visitas.html', error = 'sd')
+
         cur.execute('INSERT INTO VISITAS(IDUSUARIO) VALUES(%s)', (a, ) )
-        
+
         mysql.connection.commit()
-        
-        return render_template('registro_de_visitas.html', success = 'ds')      
+
+        return render_template('registro_de_visitas.html', success = 'ds')
 
 if __name__ == '__main__':
     app.run()
